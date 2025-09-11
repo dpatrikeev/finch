@@ -1,0 +1,95 @@
+{
+  "title": "Build tonic triads (T53) in the indicated keys",
+  "measures": [
+    {
+      "clef": "treble",
+      "keySignature": "C",
+      "text": {
+        "above": "C major"
+      },
+      "barline": 2,
+      "notes": [
+        {
+          "keys": [
+            "c/4",
+            "e/4",
+            "g/4"
+          ],
+          "duration": "w"
+        }
+      ]
+    },
+    {
+      "clef": "treble",
+      "keySignature": "F",
+      "text": {
+        "above": "F major"
+      },
+      "barline": 2,
+      "notes": [
+        {
+          "keys": [
+            "f/4",
+            "a/4",
+            "c/5"
+          ],
+          "duration": "w"
+        }
+      ]
+    },
+    {
+      "clef": "treble",
+      "keySignature": "G",
+      "text": {
+        "above": "G major"
+      },
+      "barline": 2,
+      "notes": [
+        {
+          "keys": [
+            "g/4",
+            "b/4",
+            "d/5"
+          ],
+          "duration": "w"
+        }
+      ]
+    },
+    {
+      "clef": "treble",
+      "keySignature": "D",
+      "text": {
+        "above": "D major"
+      },
+      "barline": 2,
+      "notes": [
+        {
+          "keys": [
+            "d/4",
+            "f#/4",
+            "a/4"
+          ],
+          "duration": "w"
+        }
+      ]
+    },
+    {
+      "clef": "treble",
+      "keySignature": "Bb",
+      "text": {
+        "above": "Bb major"
+      },
+      "barline": 2,
+      "notes": [
+        {
+          "keys": [
+            "bb/3",
+            "d/4",
+            "f/4"
+          ],
+          "duration": "w"
+        }
+      ]
+    }
+  ]
+}

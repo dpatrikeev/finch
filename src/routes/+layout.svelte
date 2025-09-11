@@ -1,9 +1,16 @@
 <script lang="ts">
-  import type { Snippet } from 'svelte';
   import '../app.css';
+
+  import type { Snippet } from 'svelte';
+  import type { InitialState } from '@clerk/types';
+  import { ClerkProvider } from 'svelte-clerk';
+
+  import { Toaster } from '$lib/components/ui/sonner';
+  import { Header } from '$lib/components';
 
   interface Props {
     children: Snippet;
+    data: { clerk: InitialState };
   }
 
   const { children }: Props = $props();
@@ -19,4 +26,10 @@
   />
 </svelte:head>
 
-{@render children?.()}
+<ClerkProvider>
+  <main class="min-h-screen relative overflow-hidden">
+    <Header />
+    {@render children()}
+  </main>
+  <Toaster />
+</ClerkProvider>
