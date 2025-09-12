@@ -2,9 +2,13 @@
   import { onMount } from 'svelte';
   import { prepareNotation } from './utils/prepare-notation';
   import { covertSvgToData } from './utils/svg-to-data';
-  import { notationState } from './state.svelte';
   import Score from './components/Score.svelte';
-  import type { ExerciseMeasure, Options } from './types';
+  import type {
+    ExerciseMeasure,
+    Measure,
+    Options,
+    Score as ScoreType,
+  } from './types';
 
   let fontsReady = $state(false);
   type Props = {
@@ -12,6 +16,10 @@
   };
 
   const { measures }: Props = $props();
+
+  let score = $state<ScoreType | undefined>(undefined);
+  let notation = $state<Measure[] | undefined>(undefined);
+  let options = $state<Options | undefined>(undefined);
 
   onMount(async () => {
     await document.fonts.ready;
@@ -32,7 +40,7 @@
       const measuresLength = measures.length;
       const totalWidth = staveWidth * measuresLength * scale + 1;
 
-      const options: Options = {
+      const currentOptions: Options = {
         measuresLength,
         distance,
         scale,
@@ -44,16 +52,17 @@
         totalHeight,
       };
 
-      const context = prepareNotation(measures, options);
-      const { notation, score } = covertSvgToData(context);
+      const context = prepareNotation(measures, currentOptions);
+      const { notation: currentNotation, score: currentScore } =
+        covertSvgToData(context);
 
-      notationState.notation = notation;
-      notationState.score = score;
-      notationState.options = options;
+      notation = currentNotation;
+      score = currentScore;
+      options = currentOptions;
     }
   });
 
-  const { score, notation, options } = $derived(notationState);
+  // const { score, notation, options } = $derived(notationState);
 </script>
 
 <div class="notation">

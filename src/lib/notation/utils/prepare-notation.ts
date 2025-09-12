@@ -52,7 +52,7 @@ export function prepareNotation(measures: ExerciseMeasure[], options: Options) {
       }
     }
 
-    if (notes) {
+    if (notes && notes.length > 0) {
       const staveNotes = notes.map(({ keys, duration }: ExerciseNote) => {
         const note = new StaveNote({
           keys,

@@ -29,15 +29,11 @@
   const { before, numbers, after } = parseHarmonicFunctions(title);
 </script>
 
-<h3 class="title">
+<h1 class="text-3xl font-medium mb-8 text-slate-950">
   {before}<span class="numbers">{numbers}</span>{after}
-</h3>
+</h1>
 
 <style>
-  .title {
-    font-weight: 500;
-  }
-
   .numbers {
     font-size: 0.7em;
   }

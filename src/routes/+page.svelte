@@ -12,21 +12,22 @@
     <h1
       class="mb-6 text-4xl sm:text-5xl font-serif font-extralight leading-tight text-slate-950"
     >
-      Understand music through technology
+      Изучайте музыку через технологии
     </h1>
     <p class="mb-6 text-base sm:text-lg text-slate-950 leading-relaxed">
-      Welcome to Finch: a modern music workbook based on proven over time
-      methods and personalized feedback. Learn music theory through interactive
-      exercises, instant feedback, and powered by AI guidance.
+      Добро пожаловать в Finch: современный музыкальный учебник, основанный на
+      проверенных временем методах и персонализированной обратной связи.
+      Изучайте теорию музыки через интерактивные упражнения, мгновенную обратную
+      связь и руководство с помощью ИИ.
     </p>
     <p class="mb-12 text-base sm:text-lg text-slate-950 leading-relaxed">
-      Our mission is to make academic music education accessible, clear, and
-      fun.
+      Наша миссия — сделать академическое музыкальное образование доступным,
+      понятным и увлекательным.
     </p>
 
     <SignInButton asChild mode="modal">
       {#snippet children({ signIn })}
-        <Button onclick={signIn}>Sign in to try the app</Button>
+        <Button onclick={signIn}>Войти</Button>
       {/snippet}
     </SignInButton>
   </section>
@@ -34,7 +35,7 @@
 
 <SignedIn>
   <section class="mx-auto p-10">
-    <h1 class="text-3xl font-bold mb-8 text-slate-950">Exercise List</h1>
+    <h1 class="text-3xl font-medium mb-8 text-slate-950">Список упражнений</h1>
 
     <ul class="space-y-4">
       {#each data.exercises as exercise}

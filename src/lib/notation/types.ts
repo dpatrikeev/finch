@@ -62,3 +62,30 @@ export type Options = {
   totalHeight: number;
   textHeight: number;
 };
+
+export type QuizOption = {
+  id: string;
+  measures: ExerciseMeasure[];
+  isCorrect?: boolean;
+};
+
+export type QuizExercise = {
+  id: string;
+  title: string;
+  description?: string;
+  type: 'quiz';
+  question: ExerciseMeasure[];
+  options: QuizOption[];
+  correctAnswerId: string;
+  explanation?: string;
+};
+
+export type RegularExercise = {
+  id: string;
+  title: string;
+  description?: string;
+  type?: 'regular';
+  measures: ExerciseMeasure[];
+};
+
+export type Exercise = QuizExercise | RegularExercise;

@@ -7,6 +7,7 @@
 
   import { Toaster } from '$lib/components/ui/sonner';
   import { Header } from '$lib/components';
+  import { ruRU } from '@clerk/localizations';
 
   interface Props {
     children: Snippet;
@@ -26,7 +27,7 @@
   />
 </svelte:head>
 
-<ClerkProvider>
+<ClerkProvider localization={ruRU}>
   <main class="min-h-screen relative overflow-hidden">
     <Header />
     {@render children()}

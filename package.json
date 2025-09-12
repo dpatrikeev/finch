@@ -31,6 +31,7 @@
 		"vite": "^7.0.4"
 	},
 	"dependencies": {
+		"@clerk/localizations": "^3.25.0",
 		"svelte-clerk": "^0.17.0",
 		"vexflow": "^5.0.0"
 	}

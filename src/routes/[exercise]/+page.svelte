@@ -1,15 +1,23 @@
 <script lang="ts">
   import type { PageData } from './$types';
-  import Notation from '$lib/notation/Notation.svelte';
   import { Title } from '$lib/components';
+  import Notation from '$lib/notation/Notation.svelte';
+  import Quiz from '$lib/notation/Quiz.svelte';
 
   let { data }: { data: PageData } = $props();
-  let { measures, title } = $derived(data);
+  let { exercise } = $derived(data);
 </script>
 
 <section class="mx-auto p-10">
-  <h1 class="text-3xl font-bold mb-8 text-slate-950">
-    <Title {title} />
-  </h1>
-  <Notation {measures} />
+  <Title title={exercise.title} />
+
+  {#if exercise.description}
+    <p class="text-lg mb-6 text-slate-700">{exercise.description}</p>
+  {/if}
+
+  {#if exercise.type === 'quiz'}
+    <Quiz {exercise} />
+  {:else}
+    <Notation measures={exercise.measures} />
+  {/if}
 </section>
