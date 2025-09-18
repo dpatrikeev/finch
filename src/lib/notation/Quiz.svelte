@@ -1,12 +1,7 @@
 <script lang="ts">
   import Notation from '$lib/notation/Notation.svelte';
   import { Button } from '$lib/components/ui/button';
-  import {
-    Tooltip,
-    TooltipContent,
-    TooltipTrigger,
-    TooltipProvider,
-  } from '$lib/components/ui/tooltip';
+  import * as Tooltip from '$lib/components/ui/tooltip/index.js';
   import type { Exercise, AnswerHistory } from '$lib/notation/types';
   import { toast } from 'svelte-sonner';
   import { invalidateAll } from '$app/navigation';
@@ -134,7 +129,7 @@
     <div class="options-grid grid grid-cols-2 gap-4 mb-6">
       {#each exercise.options as option, index (option.id)}
         <button
-          class="option-button p-4 border-2 rounded-lg transition-all duration-200 hover:shadow-md {selectedOption ===
+          class="relative option-button p-4 border-2 rounded-lg transition-all duration-200 hover:shadow-md {selectedOption ===
           option.id
             ? showResult
               ? option.isCorrect
@@ -152,18 +147,18 @@
           >
             <span>Вариант {String.fromCharCode(65 + index)}</span>
             {#if hasInitialAnswer && selectedOption === option.id && showResult}
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger>
+              <Tooltip.Provider>
+                <Tooltip.Root>
+                  <Tooltip.Trigger class="absolute top-0 right-0 p-4">
                     <History class="w-4 h-4 text-blue-500" />
-                  </TooltipTrigger>
-                  <TooltipContent>
+                  </Tooltip.Trigger>
+                  <Tooltip.Content>
                     Показан ваш последний ответ<br />({formatDate(
                       lastAnswer?.answered_at || ''
                     )})
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
+                  </Tooltip.Content>
+                </Tooltip.Root>
+              </Tooltip.Provider>
             {/if}
           </div>
           <div class="option-notation">
