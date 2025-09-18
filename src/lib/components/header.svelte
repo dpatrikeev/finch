@@ -20,10 +20,12 @@
     <SignedIn>
       <div class="flex items-center justify-center">
         {#if role === 'teacher'}
-          <Button variant="ghost" class="mr-2">My students</Button>
+          <Button variant="ghost" class="mr-2" href="/students"
+            >Мои студенты</Button
+          >
         {/if}
         {#if role === 'student'}
-          <Button variant="ghost" class="mr-2">My Homework</Button>
+          <Button variant="ghost" class="mr-2">Моя домашка</Button>
         {/if}
       </div>
       <div class="flex flex-col items-center justify-center min-w-10 min-h-10">
