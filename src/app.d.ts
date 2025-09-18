@@ -11,6 +11,10 @@ declare global {
     // interface PageState {}
     // interface Platform {}
   }
+
+  interface UserPublicMetadata {
+    role: 'teacher' | 'student';
+  }
 }
 
 export {};

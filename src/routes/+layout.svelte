@@ -14,7 +14,9 @@
     data: { clerk: InitialState };
   }
 
-  const { children }: Props = $props();
+  const { children, data }: Props = $props();
+
+  console.log(data);
 </script>
 
 <svelte:head>

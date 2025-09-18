@@ -1,7 +1,6 @@
 <script lang="ts">
   import type { PageData } from './$types';
   import { Title } from '$lib/components';
-  import Notation from '$lib/notation/Notation.svelte';
   import Quiz from '$lib/notation/Quiz.svelte';
 
   let { data }: { data: PageData } = $props();
@@ -15,9 +14,5 @@
     <p class="text-lg mb-6 text-slate-700">{exercise.description}</p>
   {/if}
 
-  {#if exercise.type === 'quiz'}
-    <Quiz {exercise} />
-  {:else}
-    <Notation measures={exercise.measures} />
-  {/if}
+  <Quiz {exercise} />
 </section>

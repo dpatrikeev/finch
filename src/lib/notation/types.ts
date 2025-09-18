@@ -63,29 +63,19 @@ export type Options = {
   textHeight: number;
 };
 
-export type QuizOption = {
+export type ExerciseOption = {
   id: string;
   measures: ExerciseMeasure[];
   isCorrect?: boolean;
 };
 
-export type QuizExercise = {
+export type Exercise = {
   id: string;
   title: string;
   description?: string;
   type: 'quiz';
   question: ExerciseMeasure[];
-  options: QuizOption[];
+  options: ExerciseOption[];
   correctAnswerId: string;
   explanation?: string;
 };
-
-export type RegularExercise = {
-  id: string;
-  title: string;
-  description?: string;
-  type?: 'regular';
-  measures: ExerciseMeasure[];
-};
-
-export type Exercise = QuizExercise | RegularExercise;

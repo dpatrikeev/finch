@@ -1,24 +1,9 @@
 {
-  "title": "Постройте тонические трезвучия (T⁵₃) в указанных тональностях.",
-  "measures": [
-    {
-      "clef": "treble",
-      "keySignature": "C",
-      "text": {
-        "above": "C major"
-      },
-      "barline": 2,
-      "notes": [
-        {
-          "keys": [
-            "c/4",
-            "e/4",
-            "g/4"
-          ],
-          "duration": "w"
-        }
-      ]
-    },
+  "id": "quiz-2-9",
+  "title": "Тест 2-9: Постройте тоническое трезвучие",
+  "description": "Выберите правильное тоническое трезвучие (T53) для указанной тональности",
+  "type": "quiz",
+  "question": [
     {
       "clef": "treble",
       "keySignature": "F",
@@ -26,70 +11,92 @@
         "above": "F major"
       },
       "barline": 2,
-      "notes": [
+      "notes": []
+    }
+  ],
+  "options": [
+    {
+      "id": "option-a",
+      "measures": [
         {
-          "keys": [
-            "f/4",
-            "a/4",
-            "c/5"
-          ],
-          "duration": "w"
+          "clef": "treble",
+          "keySignature": "F",
+          "barline": 2,
+          "notes": [
+            {
+              "keys": [
+                "f/4",
+                "a/4",
+                "c/5"
+              ],
+              "duration": "w"
+            }
+          ]
+        }
+      ],
+      "isCorrect": true
+    },
+    {
+      "id": "option-b",
+      "measures": [
+        {
+          "clef": "treble",
+          "keySignature": "F",
+          "barline": 2,
+          "notes": [
+            {
+              "keys": [
+                "c/4",
+                "e/4",
+                "g/4"
+              ],
+              "duration": "w"
+            }
+          ]
         }
       ]
     },
     {
-      "clef": "treble",
-      "keySignature": "G",
-      "text": {
-        "above": "G major"
-      },
-      "barline": 2,
-      "notes": [
+      "id": "option-c",
+      "measures": [
         {
-          "keys": [
-            "g/4",
-            "b/4",
-            "d/5"
-          ],
-          "duration": "w"
+          "clef": "treble",
+          "keySignature": "F",
+          "barline": 2,
+          "notes": [
+            {
+              "keys": [
+                "g/4",
+                "b/4",
+                "d/5"
+              ],
+              "duration": "w"
+            }
+          ]
         }
       ]
     },
     {
-      "clef": "treble",
-      "keySignature": "D",
-      "text": {
-        "above": "D major"
-      },
-      "barline": 2,
-      "notes": [
+      "id": "option-d",
+      "measures": [
         {
-          "keys": [
-            "d/4",
-            "f#/4",
-            "a/4"
-          ],
-          "duration": "w"
-        }
-      ]
-    },
-    {
-      "clef": "treble",
-      "keySignature": "Bb",
-      "text": {
-        "above": "Bb major"
-      },
-      "barline": 2,
-      "notes": [
-        {
-          "keys": [
-            "bb/3",
-            "d/4",
-            "f/4"
-          ],
-          "duration": "w"
+          "clef": "treble",
+          "keySignature": "F",
+          "barline": 2,
+          "notes": [
+            {
+              "keys": [
+                "d/4",
+                "f#/4",
+                "a/4"
+              ],
+              "duration": "w"
+            }
+          ]
         }
       ]
     }
-  ]
+  ],
+  "correctAnswerId": "option-a",
+  "explanation": "Тоническое трезвучие F major состоит из нот F-A-C."
 }

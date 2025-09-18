@@ -1,11 +1,11 @@
 <script lang="ts">
   import Notation from '$lib/notation/Notation.svelte';
   import { Button } from '$lib/components/ui/button';
-  import type { QuizExercise } from '$lib/notation/types';
+  import type { Exercise } from '$lib/notation/types';
   import { toast } from 'svelte-sonner';
 
   type Props = {
-    exercise: QuizExercise;
+    exercise: Exercise;
   };
 
   const { exercise }: Props = $props();

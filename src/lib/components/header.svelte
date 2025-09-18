@@ -1,6 +1,7 @@
 <script lang="ts">
-  import { SignedIn, SignedOut, SignInButton, UserButton } from 'svelte-clerk';
+  import { SignedIn, UserButton } from 'svelte-clerk';
   import Logo from './logo.svelte';
+  import { Button } from '$lib/components/ui/button';
 </script>
 
 <div class="w-full h-12">
@@ -9,8 +10,12 @@
   >
     <Logo />
 
-    <div class="flex flex-col items-center justify-center min-w-10 min-h-10">
-      <SignedIn>
+    <SignedIn>
+      <div class="flex items-center justify-center">
+        <Button variant="ghost" class="mr-2">My students</Button>
+        <Button variant="ghost" class="mr-2">My Homework</Button>
+      </div>
+      <div class="flex flex-col items-center justify-center min-w-10 min-h-10">
         <UserButton
           appearance={{
             elements: {
@@ -18,7 +23,7 @@
             },
           }}
         />
-      </SignedIn>
-    </div>
+      </div>
+    </SignedIn>
   </header>
 </div>
