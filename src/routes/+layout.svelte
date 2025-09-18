@@ -8,15 +8,14 @@
   import { Toaster } from '$lib/components/ui/sonner';
   import { Header } from '$lib/components';
   import { ruRU } from '@clerk/localizations';
+  import type { UserRole } from '$lib/utils/user';
 
   interface Props {
     children: Snippet;
-    data: { clerk: InitialState };
+    data: { clerk: InitialState; role: UserRole };
   }
 
   const { children, data }: Props = $props();
-
-  console.log(data);
 </script>
 
 <svelte:head>
@@ -31,7 +30,7 @@
 
 <ClerkProvider localization={ruRU}>
   <main class="min-h-screen relative overflow-hidden">
-    <Header />
+    <Header role={data.role} />
     {@render children()}
   </main>
   <Toaster />

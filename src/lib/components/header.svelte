@@ -2,6 +2,13 @@
   import { SignedIn, UserButton } from 'svelte-clerk';
   import Logo from './logo.svelte';
   import { Button } from '$lib/components/ui/button';
+  import type { UserRole } from '$lib/utils/user';
+
+  interface Props {
+    role: UserRole;
+  }
+
+  const { role }: Props = $props();
 </script>
 
 <div class="w-full h-12">
@@ -12,8 +19,12 @@
 
     <SignedIn>
       <div class="flex items-center justify-center">
-        <Button variant="ghost" class="mr-2">My students</Button>
-        <Button variant="ghost" class="mr-2">My Homework</Button>
+        {#if role === 'teacher'}
+          <Button variant="ghost" class="mr-2">My students</Button>
+        {/if}
+        {#if role === 'student'}
+          <Button variant="ghost" class="mr-2">My Homework</Button>
+        {/if}
       </div>
       <div class="flex flex-col items-center justify-center min-w-10 min-h-10">
         <UserButton

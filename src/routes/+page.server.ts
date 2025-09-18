@@ -1,16 +1,17 @@
 import type { PageServerLoad } from './$types';
 import { supabase } from '$lib/supabase';
-import { checkUserRole } from '$lib/utils/user';
+import { getUserRole } from '$lib/utils/user';
 
 export const load: PageServerLoad = async ({ locals }) => {
   // const response = await fetch('/exercises.json');
   // const exercises = await response.json();
 
-  const role = await checkUserRole(locals);
+  const auth = locals.auth();
+  const userId = auth.userId as string;
+  const role = await getUserRole(userId);
+
   const { data: exercises } = await supabase(locals).from('exercises').select();
 
-  // Загружаем статус выполнения упражнений для авторизованного пользователя
-  const auth = locals.auth();
   let exerciseStatuses: Record<
     string,
     { isCompleted: boolean; isCorrect: boolean }
