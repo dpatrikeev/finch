@@ -8,7 +8,8 @@ const clerkHandler = withClerkHandler();
 
 const roleBasedHandler: Handle = async ({ event, resolve }) => {
   const { pathname } = event.url;
-  const userId = event.locals.auth().userId as string;
+  const auth = event.locals.auth();
+  const userId = auth.userId as string;
   const userRole = await getUserRole(userId);
 
   // Проверяем защищенные маршруты
