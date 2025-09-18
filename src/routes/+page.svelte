@@ -39,7 +39,7 @@
 
     <ul class="space-y-4">
       {#each data.exercises as exercise}
-        <ExerciseItem {exercise} />
+        <ExerciseItem {exercise} status={data.exerciseStatuses[exercise.id]} />
       {/each}
     </ul>
   </section>

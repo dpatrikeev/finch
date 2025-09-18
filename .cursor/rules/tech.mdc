@@ -1,0 +1,6 @@
+---
+alwaysApply: true
+---
+
+По возможности используй компоненты из shadcn-svelte@latest
+Используй иконки из lucide-svelte

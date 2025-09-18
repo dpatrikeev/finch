@@ -4,7 +4,7 @@
   import Quiz from '$lib/notation/Quiz.svelte';
 
   let { data }: { data: PageData } = $props();
-  let { exercise } = $derived(data);
+  let { exercise, answersHistory } = $derived(data);
 </script>
 
 <section class="mx-auto p-10">
@@ -14,5 +14,5 @@
     <p class="text-lg mb-6 text-slate-700">{exercise.description}</p>
   {/if}
 
-  <Quiz {exercise} />
+  <Quiz {exercise} {answersHistory} />
 </section>

@@ -79,3 +79,12 @@ export type Exercise = {
   correctAnswerId: string;
   explanation?: string;
 };
+
+export type AnswerHistory = {
+  id: number;
+  user_id: string;
+  exercise_id: string;
+  selected_answer_id: string;
+  is_correct: boolean;
+  answered_at: string;
+};
