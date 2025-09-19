@@ -13,13 +13,13 @@ const roleBasedHandler: Handle = async ({ event, resolve }) => {
   const userRole = await getUserRole(userId);
 
   // Проверяем защищенные маршруты
-  if (pathname.startsWith('/my-students')) {
+  if (pathname.startsWith('/students')) {
     if (userRole !== 'teacher') {
       redirect(302, '/');
     }
   }
 
-  if (pathname.startsWith('/my-homework')) {
+  if (pathname.startsWith('/homework')) {
     if (userRole !== 'student') {
       redirect(302, '/');
     }
