@@ -1,10 +1,11 @@
 <script lang="ts">
-  import { Dialog } from '$lib/components/ui/dialog';
+  import Dialog from '$lib/components/ui/dialog/dialog.svelte';
   import { Button } from '$lib/components/ui/button';
   import { Badge } from '$lib/components/ui/badge';
-  import { CheckCircle, Circle, BookOpen, User } from 'lucide-svelte';
+  import { CircleCheck, Circle, BookOpen, User } from 'lucide-svelte';
   import type { StudentInfo } from '$lib/utils/user';
   import { enhance } from '$app/forms';
+  import { IsMobile } from '$lib/hooks/is-mobile.svelte';
 
   interface Props {
     open?: boolean;
@@ -15,6 +16,7 @@
 
   const { open = false, student, exercises, onclose }: Props = $props();
 
+  const isMobile = new IsMobile();
   let selectedExercises = $state<Set<string>>(new Set());
   let isSubmitting = $state(false);
 
@@ -43,18 +45,30 @@
   {#snippet children()}
     {#if student}
       <!-- Информация о студенте -->
-      <div class="flex items-center gap-3 mb-6 p-4 bg-blue-50 rounded-lg">
+      <div
+        class="flex items-center gap-3 mb-4 md:mb-6 p-3 md:p-4 bg-blue-50 rounded-lg"
+      >
         <div
-          class="flex items-center justify-center w-10 h-10 bg-blue-500 rounded-full text-white font-medium"
+          class="flex items-center justify-center {isMobile.current
+            ? 'w-8 h-8'
+            : 'w-10 h-10'} bg-blue-500 rounded-full text-white font-medium"
         >
-          <User class="w-5 h-5" />
+          <User class={isMobile.current ? 'w-4 h-4' : 'w-5 h-5'} />
         </div>
         <div>
-          <h3 class="font-medium text-gray-900">
+          <h3
+            class="{isMobile.current
+              ? 'text-sm'
+              : ''} font-medium text-gray-900"
+          >
             {student.firstName}
             {student.lastName}
           </h3>
-          <p class="text-sm text-gray-600">{student.email}</p>
+          <p
+            class="text-xs {isMobile.current ? '' : 'md:text-sm'} text-gray-600"
+          >
+            {student.email}
+          </p>
         </div>
       </div>
 
@@ -81,7 +95,7 @@
             >
               <div class="flex-shrink-0">
                 {#if selectedExercises.has(exercise.id)}
-                  <CheckCircle class="w-5 h-5 text-blue-600" />
+                  <CircleCheck class="w-5 h-5 text-blue-600" />
                 {:else}
                   <Circle class="w-5 h-5 text-gray-400" />
                 {/if}
