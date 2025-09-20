@@ -1,12 +1,14 @@
 <script lang="ts">
   import type { StudentInfo } from '$lib/utils/user';
-  import { BookOpen, Target, Mail } from 'lucide-svelte';
+  import { BookOpen, Target, Mail, PlusCircle, BarChart3 } from 'lucide-svelte';
+  import { Button } from '$lib/components/ui/button';
 
   interface Props {
     student: StudentInfo;
+    onassignHomework?: (event: CustomEvent<{ student: StudentInfo }>) => void;
   }
 
-  const { student }: Props = $props();
+  const { student, onassignHomework }: Props = $props();
 
   const getAccuracyColor = (accuracy: number) => {
     if (accuracy >= 80) return 'bg-green-500';
@@ -18,6 +20,13 @@
     if (accuracy >= 80) return 'text-green-600';
     if (accuracy >= 60) return 'text-yellow-600';
     return 'text-red-600';
+  };
+
+  const handleAssignHomework = () => {
+    const event = new CustomEvent('assignHomework', {
+      detail: { student },
+    });
+    onassignHomework?.(event);
   };
 </script>
 
@@ -86,5 +95,28 @@
         >{student.correctAnswers} из {student.totalExercises}</span
       >
     </div>
+  </div>
+
+  <!-- Кнопки действий -->
+  <div class="mt-6 pt-4 border-t space-y-2">
+    <Button
+      variant="outline"
+      size="sm"
+      onclick={handleAssignHomework}
+      class="w-full gap-2"
+    >
+      <PlusCircle class="w-4 h-4" />
+      Назначить домашку
+    </Button>
+
+    <Button
+      variant="ghost"
+      size="sm"
+      href="/students/{student.id}/homework"
+      class="w-full gap-2"
+    >
+      <BarChart3 class="w-4 h-4" />
+      Посмотреть статистику
+    </Button>
   </div>
 </div>

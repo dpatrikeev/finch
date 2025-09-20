@@ -12,7 +12,7 @@
 
   interface Props {
     children: Snippet;
-    data: { clerk: InitialState; role: UserRole };
+    data: { clerk: InitialState; role: UserRole; newHomeworkCount: number };
   }
 
   const { children, data }: Props = $props();
@@ -30,7 +30,7 @@
 
 <ClerkProvider localization={ruRU}>
   <main class="min-h-screen relative overflow-hidden">
-    <Header role={data.role} />
+    <Header role={data.role} newHomeworkCount={data.newHomeworkCount} />
     {@render children()}
   </main>
   <Toaster />

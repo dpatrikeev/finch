@@ -6,6 +6,8 @@
   import { toast } from 'svelte-sonner';
   import { invalidateAll } from '$app/navigation';
   import { History } from '@lucide/svelte';
+  import { format } from 'date-fns';
+  import { ru } from 'date-fns/locale';
 
   type Props = {
     exercise: Exercise;
@@ -99,13 +101,7 @@
   }
 
   function formatDate(dateString: string) {
-    return new Date(dateString).toLocaleString('ru-RU', {
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit',
-      hour: '2-digit',
-      minute: '2-digit',
-    });
+    return format(new Date(dateString), 'dd.MM.yyyy HH:mm', { locale: ru });
   }
 
   function getOptionLabel(optionId: string) {

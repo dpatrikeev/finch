@@ -2,6 +2,8 @@ import type { PageServerLoad, Actions } from './$types';
 import { error, fail } from '@sveltejs/kit';
 import type { Exercise } from '$lib/notation/types';
 import { supabase } from '$lib/supabase';
+import { formatISO } from 'date-fns';
+import { updateHomeworkProgress } from '$lib/utils/homework';
 
 export const load: PageServerLoad = async ({ fetch, params, locals }) => {
   const response = await fetch(`/exercises/${params.exercise}.json`);
@@ -50,6 +52,7 @@ export const actions: Actions = {
     }
 
     try {
+      // Сохраняем ответ в историю
       const { error: saveError } = await supabase(locals)
         .from('answers_history')
         .insert({
@@ -57,13 +60,21 @@ export const actions: Actions = {
           exercise_id: params.exercise,
           selected_answer_id: selectedAnswerId,
           is_correct: isCorrect,
-          answered_at: new Date().toISOString(),
+          answered_at: formatISO(new Date()),
         });
 
       if (saveError) {
         console.error('Error saving answer:', saveError);
         return fail(500, { error: 'Ошибка при сохранении ответа' });
       }
+
+      // Обновляем прогресс домашки, если это упражнение является частью домашки
+      await updateHomeworkProgress(
+        locals,
+        auth.userId,
+        params.exercise,
+        isCorrect
+      );
 
       return { success: true };
     } catch (err) {

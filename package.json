@@ -35,6 +35,7 @@
 	"dependencies": {
 		"@clerk/localizations": "^3.25.0",
 		"@supabase/supabase-js": "^2.57.4",
+		"date-fns": "^4.1.0",
 		"lucide-svelte": "^0.544.0",
 		"svelte-clerk": "^0.17.0",
 		"vexflow": "^5.0.0"
