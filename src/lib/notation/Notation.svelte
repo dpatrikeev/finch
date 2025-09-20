@@ -29,9 +29,11 @@
   $effect(() => {
     if (fontsReady && measures) {
       const distance: [string, string] = ['f/3', 'e/6'];
+      // Адаптивный масштаб для мобильных устройств - будет определяться CSS
       const scale = 1;
 
       const lineSpacing = 10;
+      // Адаптивная ширина нотного стана - будет определяться CSS
       const staveWidth = 200;
       const staveHeight = 110;
       const textHeight = 21;
@@ -69,7 +71,12 @@
   {#if fontsReady && score && notation && options}
     <Score {score} {notation} {options} />
   {:else}
-    <p>loading...</p>
+    <div class="flex items-center justify-center gap-2 text-muted-foreground">
+      <div
+        class="animate-spin rounded-full h-4 w-4 border-b-2 border-primary"
+      ></div>
+      <span class="text-sm">Загрузка нотации...</span>
+    </div>
   {/if}
 </div>
 
@@ -80,7 +87,26 @@
     height: min-content;
     user-select: none;
     background: white;
-    padding: 40px;
-    border-radius: 10px;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+    max-width: 100%;
+    overflow-x: auto;
+  }
+
+  /* Адаптивные отступы для мобильных устройств */
+  @media (max-width: 640px) {
+    .notation {
+      padding: 12px;
+      border-radius: 6px;
+    }
+  }
+
+  /* Плавная анимация загрузки */
+  .notation:has(div) {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 80px;
   }
 </style>

@@ -7,9 +7,8 @@
   let { exercise, answersHistory } = $derived(data);
 </script>
 
-<section class="mx-auto p-10">
+<section class="mx-auto p-5 md:p-10">
   <Title title={exercise.title} />
-
   {#if exercise.description}
     <p class="text-lg mb-6 text-slate-700">{exercise.description}</p>
   {/if}

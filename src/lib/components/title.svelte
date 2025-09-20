@@ -29,7 +29,7 @@
   const { before, numbers, after } = parseHarmonicFunctions(title);
 </script>
 
-<h1 class="text-3xl font-medium mb-8 text-slate-950">
+<h1 class="text-2xl font-medium mb-4 text-slate-950">
   {before}<span class="numbers">{numbers}</span>{after}
 </h1>
 

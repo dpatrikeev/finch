@@ -1,11 +1,14 @@
 <script lang="ts">
   import Notation from '$lib/notation/Notation.svelte';
   import { Button } from '$lib/components/ui/button';
-  import * as Tooltip from '$lib/components/ui/tooltip/index.js';
+  import * as Card from '$lib/components/ui/card';
+  import * as Tooltip from '$lib/components/ui/tooltip';
+  import { Badge } from '$lib/components/ui/badge';
+  import { Separator } from '$lib/components/ui/separator';
   import type { Exercise, AnswerHistory } from '$lib/notation/types';
   import { toast } from 'svelte-sonner';
   import { invalidateAll } from '$app/navigation';
-  import { History } from '@lucide/svelte';
+  import { History, CircleCheck, Clock, Eye, CircleX } from 'lucide-svelte';
   import { format } from 'date-fns';
   import { ru } from 'date-fns/locale';
 
@@ -110,235 +113,209 @@
   }
 </script>
 
-<div class="quiz-container">
-  <div class="question-section mb-8">
-    <div class="question-notation">
-      <Notation measures={exercise.question} />
-    </div>
-  </div>
+<div class="container mx-auto px-0 py-6 max-w-7xl">
+  <!-- Вопрос -->
+  <Card.Root class="mb-6">
+    <Card.Header class="pb-4">
+      <Card.Title class="text-lg md:text-xl text-center"
+        >Музыкальное упражнение</Card.Title
+      >
+    </Card.Header>
+    <Card.Content class="flex justify-center p-4 md:p-6">
+      <div class="notation-container">
+        <Notation measures={exercise.question} />
+      </div>
+    </Card.Content>
+  </Card.Root>
 
-  <!-- Основной грид для секций "Ответы" и "История" -->
-  <div class="main-grid">
+  <!-- Основной грид -->
+  <div class="grid gap-6">
     <!-- Секция с вариантами ответов -->
-    <div class="options-section">
-      <h3 class="text-xl font-semibold mb-4 text-slate-800">
-        Выберите правильный ответ:
-      </h3>
+    <Card.Root>
+      <Card.Header>
+        <Card.Title class="flex items-center gap-2">
+          <Clock class="w-5 h-5 text-primary" />
+          Выберите правильный ответ
+        </Card.Title>
+      </Card.Header>
+      <Card.Content class="space-y-6">
+        <!-- Адаптивный грид для опций -->
+        <div class="grid gap-4 grid-cols-1 md:grid-cols-2">
+          {#each exercise.options as option, index (option.id)}
+            {@const isSelected = selectedOption === option.id}
+            {@const isCorrectOption = option.isCorrect}
+            {@const showAsCorrect =
+              showResult && showCorrectAnswer && isCorrectOption}
+            {@const showAsIncorrect =
+              showResult && isSelected && !isCorrectOption}
 
-      <!-- Адаптивный грид для опций -->
-      <div class="options-grid gap-4 mb-6">
-        {#each exercise.options as option, index (option.id)}
-          <button
-            class="relative option-button p-4 border-2 rounded-lg transition-all duration-200 hover:shadow-md {selectedOption ===
-            option.id
-              ? showResult
-                ? option.isCorrect
-                  ? 'border-green-500 bg-green-50'
-                  : 'border-red-500 bg-red-50'
-                : 'border-blue-500 bg-blue-50'
-              : showResult && showCorrectAnswer && option.isCorrect
-                ? 'border-green-500 bg-green-50'
-                : 'border-gray-300 hover:border-gray-400'}"
-            onclick={() => selectOption(option.id)}
-            disabled={showResult}
-          >
-            <div
-              class="option-label text-sm font-medium mb-2 text-slate-600 flex items-center justify-between"
+            <Card.Root
+              class="relative transition-all duration-200 hover:shadow-md cursor-pointer
+                  {isSelected && !showResult ? 'ring-2 ring-primary' : ''}
+                  {showAsCorrect ? 'ring-2 ring-green-500 bg-green-50' : ''}
+                  {showAsIncorrect ? 'ring-2 ring-red-500 bg-red-50' : ''}
+                  {showResult ? 'cursor-not-allowed' : 'hover:shadow-md'}"
+              onclick={() => selectOption(option.id)}
             >
-              <span>Вариант {String.fromCharCode(65 + index)}</span>
-              {#if hasInitialAnswer && selectedOption === option.id && showResult}
-                <Tooltip.Provider>
-                  <Tooltip.Root>
-                    <Tooltip.Trigger class="absolute top-0 right-0 p-4">
-                      <History class="w-4 h-4 text-blue-500" />
-                    </Tooltip.Trigger>
-                    <Tooltip.Content>
-                      Показан ваш последний ответ<br />({formatDate(
-                        lastAnswer?.answered_at || ''
-                      )})
-                    </Tooltip.Content>
-                  </Tooltip.Root>
-                </Tooltip.Provider>
-              {/if}
-            </div>
-            <div class="option-notation">
-              <Notation measures={option.measures} />
-            </div>
-          </button>
-        {/each}
-      </div>
+              <Card.Header class="pb-2">
+                <div class="flex items-center justify-between">
+                  <Badge variant="secondary" class="text-xs">
+                    Вариант {String.fromCharCode(65 + index)}
+                  </Badge>
 
-      {#if showResult && !isCorrect && exercise.explanation}
-        <div class="explanation mt-6 mb-6 p-4 bg-slate-50 rounded-lg border">
-          <h4 class="font-semibold text-slate-800 mb-2">Объяснение:</h4>
-          <p class="text-slate-700">{exercise.explanation}</p>
+                  <div class="flex items-center gap-2">
+                    {#if hasInitialAnswer && selectedOption === option.id && showResult}
+                      <Tooltip.Provider>
+                        <Tooltip.Root>
+                          <Tooltip.Trigger>
+                            <History class="w-4 h-4 text-blue-500" />
+                          </Tooltip.Trigger>
+                          <Tooltip.Content>
+                            Показан ваш последний ответ<br />({formatDate(
+                              lastAnswer?.answered_at || ''
+                            )})
+                          </Tooltip.Content>
+                        </Tooltip.Root>
+                      </Tooltip.Provider>
+                    {/if}
+
+                    {#if showResult}
+                      {#if showAsCorrect}
+                        <CircleCheck class="w-5 h-5 text-green-500" />
+                      {:else if showAsIncorrect}
+                        <CircleX class="w-5 h-5 text-red-500" />
+                      {/if}
+                    {/if}
+                  </div>
+                </div>
+              </Card.Header>
+              <Card.Content class="flex justify-center pt-2">
+                <div class="notation-container">
+                  <Notation measures={option.measures} />
+                </div>
+              </Card.Content>
+            </Card.Root>
+          {/each}
         </div>
-      {/if}
 
-      <div class="quiz-controls flex flex-wrap gap-4">
-        {#if !showResult}
-          <Button
-            onclick={checkAnswer}
-            disabled={!selectedOption || isSubmitting}
-            class="flex-1 sm:flex-none"
-          >
-            {isSubmitting ? 'Проверка...' : 'Проверить ответ'}
-          </Button>
-        {:else}
-          <div class="flex flex-wrap gap-4 w-full sm:w-auto">
-            {#if !isCorrect && !showCorrectAnswer}
-              <Button onclick={revealCorrectAnswer} class="flex-1 sm:flex-none"
-                >Показать ответ</Button
+        <!-- Объяснение -->
+        {#if showResult && !isCorrect && exercise.explanation}
+          <Card.Root class="border-amber-200 bg-amber-50">
+            <Card.Header class="pb-2">
+              <Card.Title
+                class="text-amber-800 text-base flex items-center gap-2"
               >
-            {/if}
-            <Button
-              onclick={resetQuiz}
-              variant="outline"
-              class="flex-1 sm:flex-none"
-            >
-              Попробовать еще раз
-            </Button>
-          </div>
+                <Eye class="w-4 h-4" />
+                Объяснение
+              </Card.Title>
+            </Card.Header>
+            <Card.Content>
+              <p class="text-amber-700">{exercise.explanation}</p>
+            </Card.Content>
+          </Card.Root>
         {/if}
-      </div>
-    </div>
+
+        <Separator />
+
+        <!-- Контролы -->
+        <div class="flex flex-col sm:flex-row gap-10">
+          {#if !showResult}
+            <Button
+              onclick={checkAnswer}
+              disabled={!selectedOption || isSubmitting}
+              size="lg"
+            >
+              {isSubmitting ? 'Проверка...' : 'Проверить ответ'}
+            </Button>
+          {:else}
+            <div class="flex flex-col sm:flex-row gap-3 w-full">
+              {#if !isCorrect && !showCorrectAnswer}
+                <Button onclick={revealCorrectAnswer} size="lg">
+                  <Eye class="w-4 h-4 mr-2" />
+                  Показать ответ
+                </Button>
+              {/if}
+              <Button onclick={resetQuiz} variant="outline" size="lg">
+                Попробовать еще раз
+              </Button>
+            </div>
+          {/if}
+        </div>
+      </Card.Content>
+    </Card.Root>
 
     <!-- История ответов -->
     {#if answersHistory.length > 0}
-      <div class="history-section">
-        <h3 class="text-xl font-semibold mb-4 text-slate-800">
-          История ответов
-        </h3>
-
-        <div class="history-list space-y-3 max-h-96 overflow-y-auto">
-          {#each answersHistory as answer}
-            <div
-              class="history-item p-4 border rounded-lg {answer.is_correct
-                ? 'bg-green-50 border-green-200'
-                : 'bg-red-50 border-red-200'}"
-            >
-              <div class="flex justify-between items-start">
-                <div class="flex-1">
-                  <div class="flex items-center gap-2 mb-2">
-                    <span
-                      class="font-medium text-sm {answer.is_correct
-                        ? 'text-green-700'
-                        : 'text-red-700'}"
+      <Card.Root>
+        <Card.Header>
+          <Card.Title class="text-base flex items-center gap-2">
+            <History class="w-4 h-4 text-primary" />
+            История ответов
+          </Card.Title>
+        </Card.Header>
+        <Card.Content>
+          <div class="space-y-3 max-h-96 overflow-y-auto">
+            {#each answersHistory as answer}
+              <div
+                class="p-3 rounded-lg border {answer.is_correct
+                  ? 'bg-green-50 border-green-200'
+                  : 'bg-red-50 border-red-200'}"
+              >
+                <div class="flex items-center gap-2 mb-2">
+                  {#if answer.is_correct}
+                    <CircleCheck class="w-4 h-4 text-green-600" />
+                    <span class="font-medium text-sm text-green-700"
+                      >Правильно</span
                     >
-                      {answer.is_correct ? '✓ Правильно' : '✗ Неправильно'}
-                    </span>
-                    <span class="text-sm text-slate-600">
-                      Вариант {getOptionLabel(answer.selected_answer_id)}
-                    </span>
-                  </div>
+                  {:else}
+                    <CircleX class="w-4 h-4 text-red-600" />
+                    <span class="font-medium text-sm text-red-700"
+                      >Неправильно</span
+                    >
+                  {/if}
+                </div>
 
-                  <div class="text-xs text-slate-500">
-                    {formatDate(answer.answered_at)}
-                  </div>
+                <div class="flex items-center gap-2 mb-1">
+                  <Badge variant="outline" class="text-xs">
+                    {getOptionLabel(answer.selected_answer_id)}
+                  </Badge>
+                </div>
+
+                <div class="text-xs text-muted-foreground">
+                  {formatDate(answer.answered_at)}
                 </div>
               </div>
-            </div>
-          {/each}
-        </div>
-      </div>
+            {/each}
+          </div>
+        </Card.Content>
+      </Card.Root>
     {/if}
   </div>
 </div>
 
 <style>
-  .quiz-container {
-    max-width: 1400px;
-    margin: 0 auto;
-    padding: 0 1rem;
-  }
-
-  .question-notation,
-  .option-notation {
+  .notation-container {
     display: flex;
     justify-content: center;
+    align-items: center;
+    min-height: 80px;
+    overflow-x: auto;
   }
 
-  .option-button:disabled {
-    cursor: not-allowed;
-  }
-
-  .options-grid {
-    display: grid;
-    min-height: 200px;
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  .option-button {
-    min-width: 200px;
-    width: 100%;
-  }
-
-  .main-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 2rem;
-    align-items: start;
-  }
-
-  .options-section {
-    min-width: 0; /* Предотвращает переполнение */
-  }
-
-  .history-section {
-    min-width: 0; /* Предотвращает переполнение */
-    min-height: fit-content;
-  }
-
-  /* Мобильные устройства */
+  /* Улучшаем отображение нотации на мобильных устройствах */
   @media (max-width: 640px) {
-    .quiz-container {
-      padding: 0 0.5rem;
-    }
-
-    .options-grid {
-      min-height: auto;
-      grid-template-columns: 1fr;
-    }
-
-    .option-button {
-      padding: 1rem;
-      min-width: 100%;
-    }
-
-    .main-grid {
-      gap: 2rem;
-      grid-template-columns: 1fr;
+    .notation-container {
+      min-height: 60px;
+      padding: 0.5rem;
     }
   }
 
-  /* Планшеты */
-  @media (min-width: 641px) and (max-width: 1023px) {
-    .main-grid {
-      gap: 2rem;
-      grid-template-columns: 1fr;
-    }
-
-    .options-grid {
-      grid-template-columns: repeat(2, 1fr);
-    }
+  /* Плавная анимация для карточек */
+  :global(.card-root) {
+    transition: all 0.2s ease-in-out;
   }
 
-  /* Десктоп */
-  @media (min-width: 1024px) {
-    .main-grid {
-      gap: 3rem;
-      grid-template-columns: 4fr 1fr;
-    }
-
-    .options-grid {
-      grid-template-columns: repeat(2, 1fr);
-    }
-
-    .history-section {
-      position: sticky;
-      top: 2rem;
-      max-height: calc(100vh - 4rem);
-      overflow-y: auto;
-    }
+  :global(.card-root:hover) {
+    transform: translateY(-1px);
   }
 </style>

@@ -1,11 +1,10 @@
 <script lang="ts">
-  import Dialog from '$lib/components/ui/dialog/dialog.svelte';
+  import { CircleCheck, Circle, BookOpen, User } from 'lucide-svelte';
+  import * as Dialog from '$lib/components/ui/dialog';
   import { Button } from '$lib/components/ui/button';
   import { Badge } from '$lib/components/ui/badge';
-  import { CircleCheck, Circle, BookOpen, User } from 'lucide-svelte';
   import type { StudentInfo } from '$lib/utils/user';
   import { enhance } from '$app/forms';
-  import { IsMobile } from '$lib/hooks/is-mobile.svelte';
 
   interface Props {
     open?: boolean;
@@ -16,7 +15,6 @@
 
   const { open = false, student, exercises, onclose }: Props = $props();
 
-  const isMobile = new IsMobile();
   let selectedExercises = $state<Set<string>>(new Set());
   let isSubmitting = $state(false);
 
@@ -41,32 +39,31 @@
   };
 </script>
 
-<Dialog {open} title="Назначить домашнее задание" onclose={handleClose}>
-  {#snippet children()}
+<Dialog.Root {open} onOpenChange={(newOpen) => !newOpen && handleClose()}>
+  <Dialog.Content class="sm:max-w-[600px] max-h-[80vh]">
+    <Dialog.Header>
+      <Dialog.Title>Назначить домашнее задание</Dialog.Title>
+      <Dialog.Description>
+        Выберите упражнения для назначения студенту
+      </Dialog.Description>
+    </Dialog.Header>
+
     {#if student}
       <!-- Информация о студенте -->
       <div
         class="flex items-center gap-3 mb-4 md:mb-6 p-3 md:p-4 bg-blue-50 rounded-lg"
       >
         <div
-          class="flex items-center justify-center {isMobile.current
-            ? 'w-8 h-8'
-            : 'w-10 h-10'} bg-blue-500 rounded-full text-white font-medium"
+          class="flex items-center justify-center w-8 h-8 md:w-10 md:h-10 bg-blue-500 rounded-full text-white font-medium"
         >
-          <User class={isMobile.current ? 'w-4 h-4' : 'w-5 h-5'} />
+          <User class="w-4 h-4 md:w-5 md:h-5" />
         </div>
         <div>
-          <h3
-            class="{isMobile.current
-              ? 'text-sm'
-              : ''} font-medium text-gray-900"
-          >
+          <h3 class="text-sm md:text-base font-medium text-gray-900">
             {student.firstName}
             {student.lastName}
           </h3>
-          <p
-            class="text-xs {isMobile.current ? '' : 'md:text-sm'} text-gray-600"
-          >
+          <p class="text-xs md:text-sm text-gray-600">
             {student.email}
           </p>
         </div>
@@ -155,28 +152,28 @@
         <p>Студент не выбран</p>
       </div>
     {/if}
-  {/snippet}
 
-  {#snippet footer()}
-    <Button variant="ghost" onclick={handleClose} disabled={isSubmitting}>
-      Отмена
-    </Button>
-    <Button
-      onclick={() => {
-        if (selectedExercises.size > 0) {
-          document.querySelector('form')?.requestSubmit();
-        }
-      }}
-      disabled={selectedExercises.size === 0 || isSubmitting}
-    >
-      {#if isSubmitting}
-        Назначение...
-      {:else}
-        Назначить ({selectedExercises.size})
-      {/if}
-    </Button>
-  {/snippet}
-</Dialog>
+    <Dialog.Footer>
+      <Button variant="ghost" onclick={handleClose} disabled={isSubmitting}>
+        Отмена
+      </Button>
+      <Button
+        onclick={() => {
+          if (selectedExercises.size > 0) {
+            document.querySelector('form')?.requestSubmit();
+          }
+        }}
+        disabled={selectedExercises.size === 0 || isSubmitting}
+      >
+        {#if isSubmitting}
+          Назначение...
+        {:else}
+          Назначить ({selectedExercises.size})
+        {/if}
+      </Button>
+    </Dialog.Footer>
+  </Dialog.Content>
+</Dialog.Root>
 
 <style>
   .line-clamp-2 {

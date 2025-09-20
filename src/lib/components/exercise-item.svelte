@@ -1,11 +1,9 @@
 <script lang="ts">
-  import { CircleCheck, CircleX } from '@lucide/svelte';
-  import {
-    Tooltip,
-    TooltipContent,
-    TooltipTrigger,
-    TooltipProvider,
-  } from '$lib/components/ui/tooltip';
+  import { CircleCheck, CircleX, BookOpen, ArrowRight } from 'lucide-svelte';
+  import { Button } from '$lib/components/ui/button';
+  import { Badge } from '$lib/components/ui/badge';
+  import * as Tooltip from '$lib/components/ui/tooltip';
+  import * as Card from '$lib/components/ui/card';
 
   interface Exercise {
     id: string;
@@ -18,44 +16,90 @@
     isCorrect: boolean;
   }
 
-  let { exercise, status }: { exercise: Exercise; status?: ExerciseStatus } =
-    $props();
+  interface Props {
+    exercise: Exercise;
+    status?: ExerciseStatus;
+  }
+
+  let { exercise, status }: Props = $props();
 </script>
 
-<li
-  class="bg-white rounded-lg shadow-sm border border-gray-200 p-4 hover:shadow-md transition-shadow"
+<Card.Root
+  class="group hover:shadow-lg transition-all duration-200 hover:-translate-y-1"
 >
-  <div class="flex items-start justify-between">
-    <div class="flex-1">
-      <div class="flex items-center gap-3">
-        <a
-          href="/{exercise.id}"
-          class="text-blue-600 hover:text-blue-800 font-medium text-lg"
-        >
-          {exercise.title}
-        </a>
-        {#if status?.isCompleted}
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger>
-                {#if status.isCorrect}
-                  <CircleCheck class="w-5 h-5 text-green-500" />
-                {:else}
-                  <CircleX class="w-5 h-5 text-red-500" />
-                {/if}
-              </TooltipTrigger>
-              <TooltipContent>
-                {status.isCorrect
-                  ? 'Выполнено правильно'
-                  : 'Выполнено неправильно'}
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-        {/if}
+  <Card.Content class="p-4 md:p-6">
+    <div
+      class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between"
+    >
+      <div class="flex-1 space-y-3">
+        <div class="flex items-center gap-3 flex-wrap">
+          <div class="flex items-center gap-2">
+            <BookOpen class="w-5 h-5 text-primary" />
+            <Badge variant="outline" class="font-mono text-xs">
+              {exercise.id}
+            </Badge>
+          </div>
+
+          {#if status?.isCompleted}
+            <Tooltip.Provider>
+              <Tooltip.Root>
+                <Tooltip.Trigger>
+                  {#if status.isCorrect}
+                    <Badge
+                      class="text-xs bg-green-100 text-green-700 border-green-200 hover:bg-green-200"
+                    >
+                      <CircleCheck class="w-3 h-3 mr-1" />
+                      Решено
+                    </Badge>
+                  {:else}
+                    <Badge
+                      class="text-xs bg-red-100 text-red-700 border-red-200 hover:bg-red-200"
+                    >
+                      <CircleX class="w-3 h-3 mr-1" />
+                      Ошибка
+                    </Badge>
+                  {/if}
+                </Tooltip.Trigger>
+                <Tooltip.Content>
+                  {status.isCorrect
+                    ? 'Упражнение выполнено правильно'
+                    : 'Упражнение выполнено с ошибками'}
+                </Tooltip.Content>
+              </Tooltip.Root>
+            </Tooltip.Provider>
+          {:else}
+            <Badge class="text-xs bg-gray-100 text-gray-600 border-gray-200">
+              <CircleX class="w-3 h-3 mr-1 opacity-50" />
+              Не решено
+            </Badge>
+          {/if}
+        </div>
+
+        <div class="space-y-2">
+          <h3
+            class="text-lg md:text-xl font-medium text-foreground group-hover:text-primary transition-colors"
+          >
+            {exercise.title}
+          </h3>
+          <p class="text-sm md:text-base text-muted-foreground leading-relaxed">
+            {exercise.description}
+          </p>
+        </div>
       </div>
-      <p class="text-gray-600 mt-2 text-sm">
-        {exercise.description}
-      </p>
+
+      <div class="w-full md:w-auto md:ml-6">
+        <Button
+          href="/{exercise.id}"
+          variant="secondary"
+          class="w-full md:w-auto group-hover:shadow-md transition-shadow"
+          size="lg"
+        >
+          {status?.isCompleted ? 'Повторить' : 'Начать'}
+          <ArrowRight
+            class="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform"
+          />
+        </Button>
+      </div>
     </div>
-  </div>
-</li>
+  </Card.Content>
+</Card.Root>

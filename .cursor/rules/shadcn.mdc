@@ -1,0 +1,334 @@
+---
+alwaysApply: true
+---
+
+# shadcn-svelte — LLM.txt
+
+> Сжатый конспект по компонентам shadcn‑svelte с минимальными примерами использования и импортами. Подходит как «знание» для ИИ/копилотов и как быстрая памятка для людей.
+
+## Общие правила
+
+* Импорт: `import { X } from "$lib/components/ui/<name>"` или `import * as X from "$lib/components/ui/<name>"` для «групповых» компонентов (Tabs, Card и т.п.).
+* Частые пропсы: `variant`, `size`, `class`, `href` (для ссылок).
+* Для иконок используйте `lucide-svelte`.
+* Многие компоненты завязаны на `bits-ui` (под капотом) и Tailwind.
+
+---
+
+## Button
+
+```svelte
+<script lang="ts">
+  import { Button } from "$lib/components/ui/button";
+</script>
+<Button>Button</Button>
+<Button variant="secondary">Secondary</Button>
+<Button variant="outline" size="sm">Outline</Button>
+<Button href="/dashboard">As link</Button>
+```
+
+## Input
+
+```svelte
+<script lang="ts">
+  import { Input } from "$lib/components/ui/input";
+</script>
+<Input type="email" placeholder="email" class="max-w-xs" />
+```
+
+## Label
+
+```svelte
+<script lang="ts">
+  import { Label } from "$lib/components/ui/label";
+  import { Input } from "$lib/components/ui/input";
+</script>
+<div class="flex max-w-sm flex-col gap-1.5">
+  <Label for="email">Email</Label>
+  <Input id="email" type="email" />
+</div>
+```
+
+## Card (Root/Header/Content/Footer)
+
+```svelte
+<script lang="ts">
+  import * as Card from "$lib/components/ui/card";
+</script>
+<Card.Root class="w-[380px]">
+  <Card.Header>
+    <Card.Title>Title</Card.Title>
+    <Card.Description>Optional description</Card.Description>
+  </Card.Header>
+  <Card.Content>Body</Card.Content>
+  <Card.Footer>Footer actions</Card.Footer>
+</Card.Root>
+```
+
+## Tabs
+
+```svelte
+<script lang="ts">
+  import * as Tabs from "$lib/components/ui/tabs";
+</script>
+<Tabs.Root value="account">
+  <Tabs.List>
+    <Tabs.Trigger value="account">Account</Tabs.Trigger>
+    <Tabs.Trigger value="password">Password</Tabs.Trigger>
+  </Tabs.List>
+  <Tabs.Content value="account">Account content</Tabs.Content>
+  <Tabs.Content value="password">Password content</Tabs.Content>
+</Tabs.Root>
+```
+
+## Dialog
+
+```svelte
+<script lang="ts">
+  import * as Dialog from "$lib/components/ui/dialog";
+  import { Button } from "$lib/components/ui/button";
+</script>
+<Dialog.Root>
+  <Dialog.Trigger asChild>
+    <Button>Open dialog</Button>
+  </Dialog.Trigger>
+  <Dialog.Content>
+    <Dialog.Header>
+      <Dialog.Title>Dialog title</Dialog.Title>
+      <Dialog.Description>Short helper text</Dialog.Description>
+    </Dialog.Header>
+    <p>Dialog body</p>
+    <Dialog.Footer>
+      <Dialog.Close asChild><Button variant="outline">Close</Button></Dialog.Close>
+      <Button>Confirm</Button>
+    </Dialog.Footer>
+  </Dialog.Content>
+</Dialog.Root>
+```
+
+## Dropdown Menu
+
+```svelte
+<script lang="ts">
+  import * as DropdownMenu from "$lib/components/ui/dropdown-menu";
+  import { Button } from "$lib/components/ui/button";
+</script>
+<DropdownMenu.Root>
+  <DropdownMenu.Trigger asChild>
+    <Button variant="outline">Open</Button>
+  </DropdownMenu.Trigger>
+  <DropdownMenu.Content>
+    <DropdownMenu.Item>Profile</DropdownMenu.Item>
+    <DropdownMenu.Item>Settings</DropdownMenu.Item>
+    <DropdownMenu.Separator />
+    <DropdownMenu.Item>Log out</DropdownMenu.Item>
+  </DropdownMenu.Content>
+</DropdownMenu.Root>
+```
+
+## Select
+
+```svelte
+<script lang="ts">
+  import * as Select from "$lib/components/ui/select";
+</script>
+<Select.Root>
+  <Select.Trigger class="w-[220px]">
+    <Select.Value placeholder="Select a fruit" />
+  </Select.Trigger>
+  <Select.Content>
+    <Select.Group>
+      <Select.Label>Fruits</Select.Label>
+      <Select.Item value="apple">Apple</Select.Item>
+      <Select.Item value="banana">Banana</Select.Item>
+    </Select.Group>
+  </Select.Content>
+</Select.Root>
+```
+
+## Popover
+
+```svelte
+<script lang="ts">
+  import * as Popover from "$lib/components/ui/popover";
+  import { Button } from "$lib/components/ui/button";
+</script>
+<Popover.Root>
+  <Popover.Trigger asChild>
+    <Button variant="outline">Open popover</Button>
+  </Popover.Trigger>
+  <Popover.Content class="w-64">Popover content</Popover.Content>
+</Popover.Root>
+```
+
+## Tooltip
+
+```svelte
+<script lang="ts">
+  import * as Tooltip from "$lib/components/ui/tooltip";
+</script>
+<Tooltip.Root>
+  <Tooltip.Trigger>Hover me</Tooltip.Trigger>
+  <Tooltip.Content>Helpful tip</Tooltip.Content>
+</Tooltip.Root>
+```
+
+## Checkbox
+
+```svelte
+<script lang="ts">
+  import { Checkbox } from "$lib/components/ui/checkbox";
+  import { Label } from "$lib/components/ui/label";
+</script>
+<label class="flex items-center gap-2">
+  <Checkbox id="accept" />
+  <Label for="accept">Accept terms</Label>
+</label>
+```
+
+## Radio Group
+
+```svelte
+<script lang="ts">
+  import * as RadioGroup from "$lib/components/ui/radio-group";
+</script>
+<RadioGroup.Root value="a" class="grid gap-2">
+  <label class="flex items-center gap-2">
+    <RadioGroup.Item value="a" /> Option A
+  </label>
+  <label class="flex items-center gap-2">
+    <RadioGroup.Item value="b" /> Option B
+  </label>
+</RadioGroup.Root>
+```
+
+## Switch
+
+```svelte
+<script lang="ts">
+  import { Switch } from "$lib/components/ui/switch";
+</script>
+<label class="flex items-center gap-2">
+  <Switch /> Enable notifications
+</label>
+```
+
+## Textarea
+
+```svelte
+<script lang="ts">
+  import { Textarea } from "$lib/components/ui/textarea";
+</script>
+<Textarea placeholder="Tell us more…" class="min-h-28 max-w-md" />
+```
+
+## Accordion
+
+```svelte
+<script lang="ts">
+  import * as Accordion from "$lib/components/ui/accordion";
+</script>
+<Accordion.Root type="single" collapsible>
+  <Accordion.Item value="item-1">
+    <Accordion.Trigger>What is shadcn?</Accordion.Trigger>
+    <Accordion.Content>UI components with Tailwind.</Accordion.Content>
+  </Accordion.Item>
+</Accordion.Root>
+```
+
+## Combobox (Command‑style select)
+
+```svelte
+<script lang="ts">
+  import * as Combobox from "$lib/components/ui/combobox";
+</script>
+<Combobox.Root>
+  <Combobox.Input placeholder="Search..." />
+  <Combobox.Content>
+    <Combobox.Empty>No results.</Combobox.Empty>
+    <Combobox.Group>
+      <Combobox.Item value="apple">Apple</Combobox.Item>
+      <Combobox.Item value="banana">Banana</Combobox.Item>
+    </Combobox.Group>
+  </Combobox.Content>
+</Combobox.Root>
+```
+
+## Calendar / Date Picker (Single)
+
+```svelte
+<script lang="ts">
+  import { Calendar } from "$lib/components/ui/calendar";
+</script>
+<Calendar />
+```
+
+## Table (unstyled primitives + Tailwind)
+
+```svelte
+<script lang="ts">
+  import * as Table from "$lib/components/ui/table";
+</script>
+<Table.Root>
+  <Table.Header>
+    <Table.Row>
+      <Table.Head>Name</Table.Head>
+      <Table.Head>Role</Table.Head>
+    </Table.Row>
+  </Table.Header>
+  <Table.Body>
+    <Table.Row>
+      <Table.Cell>Jane</Table.Cell>
+      <Table.Cell>Engineer</Table.Cell>
+    </Table.Row>
+  </Table.Body>
+</Table.Root>
+```
+
+## Sonner (toast)
+
+```svelte
+<script lang="ts">
+  import { Toaster, toast } from "svelte-sonner";
+  import { Button } from "$lib/components/ui/button";
+</script>
+<Toaster />
+<Button on:click={() => toast.success("Saved!")}>Notify</Button>
+```
+
+## Дополнительно (по аналогии)
+
+* **Sheet/Drawer**: боковая панель с `Sheet.Root`, `Sheet.Trigger`, `Sheet.Content`.
+* **Popover/Hover Card**: всплывающие контейнеры над якорем.
+* **Slider/Progress**: ввод диапазона и индикатор выполнения.
+* **Pagination**: навигация по страницам списков.
+* **Breadcrumb**: иерархические ссылки навигации.
+* **Avatar/Badge/Skeleton**: декоративные и статусные элементы.
+
+---
+
+### Шпаргалка импортов (паттерн)
+
+```
+$lib/components/ui/button        → { Button }
+$lib/components/ui/input         → { Input }
+$lib/components/ui/label         → { Label }
+$lib/components/ui/card          → * as Card
+$lib/components/ui/tabs          → * as Tabs
+$lib/components/ui/dialog        → * as Dialog
+$lib/components/ui/dropdown-menu → * as DropdownMenu
+$lib/components/ui/select        → * as Select
+$lib/components/ui/tooltip       → * as Tooltip
+$lib/components/ui/popover       → * as Popover
+$lib/components/ui/checkbox      → { Checkbox }
+$lib/components/ui/radio-group   → * as RadioGroup
+$lib/components/ui/switch        → { Switch }
+$lib/components/ui/textarea      → { Textarea }
+$lib/components/ui/accordion     → * as Accordion
+$lib/components/ui/combobox      → * as Combobox
+$lib/components/ui/calendar      → { Calendar }
+$lib/components/ui/table         → * as Table
+```
+
+> Подробные варианты (`variant`, `size`, состояния, дополнительные подпакеты) смотрите в исходниках компонентов — структура везде однотипная, примеры выше закрывают 80% кейсов.
+

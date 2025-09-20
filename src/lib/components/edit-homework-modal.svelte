@@ -1,11 +1,19 @@
 <script lang="ts">
-  import { Dialog } from '$lib/components/ui/dialog';
+  import * as Dialog from '$lib/components/ui/dialog';
   import { Button } from '$lib/components/ui/button';
   import { Badge } from '$lib/components/ui/badge';
-  import { Check, Loader2, Edit3, Trash2, AlertTriangle } from 'lucide-svelte';
+  import {
+    Check,
+    LoaderCircle,
+    SquarePen,
+    Trash2,
+    TriangleAlert,
+  } from 'lucide-svelte';
   import { enhance } from '$app/forms';
   import { toast } from 'svelte-sonner';
   import { goto } from '$app/navigation';
+  import { format } from 'date-fns';
+  import { ru } from 'date-fns/locale';
   import type { StudentInfo } from '$lib/utils/user';
   import type { HomeworkItem } from '$lib/utils/homework';
 
@@ -87,15 +95,20 @@
   });
 </script>
 
-<Dialog {open} onclose={handleClose}>
-  {#snippet children()}
+<Dialog.Root {open} onOpenChange={(newOpen) => !newOpen && handleClose()}>
+  <Dialog.Content class="sm:max-w-[600px] max-h-[80vh]">
     {#if !showDeleteConfirm}
-      <div class="space-y-6">
-        <div class="flex items-center gap-3">
-          <Edit3 class="w-6 h-6 text-blue-600" />
-          <h2 class="text-2xl font-bold">Редактировать домашнее задание</h2>
-        </div>
+      <Dialog.Header>
+        <Dialog.Title class="flex items-center gap-3">
+          <SquarePen class="w-6 h-6 text-blue-600" />
+          Редактировать домашнее задание
+        </Dialog.Title>
+        <Dialog.Description>
+          Измените список упражнений или удалите домашнее задание
+        </Dialog.Description>
+      </Dialog.Header>
 
+      <div class="space-y-6">
         <!-- Информация о домашке и студенте -->
         <div class="p-4 bg-blue-50 rounded-lg">
           <div class="flex items-center justify-between mb-2">
@@ -103,9 +116,9 @@
               Домашнее задание #{homework.id}
             </h3>
             <Badge variant="outline">
-              Создано: {new Date(homework.created_at).toLocaleDateString(
-                'ru-RU'
-              )}
+              Создано: {format(new Date(homework.created_at), 'dd.MM.yyyy', {
+                locale: ru,
+              })}
             </Badge>
           </div>
           <p class="text-blue-700">
@@ -165,67 +178,78 @@
           {/if}
         </div>
 
-        <!-- Кнопки действий -->
-        <div class="flex justify-between gap-3 pt-4 border-t">
-          <Button
-            type="button"
-            variant="destructive"
-            onclick={handleDeleteClick}
-            class="gap-2"
-          >
-            <Trash2 class="w-4 h-4" />
-            Удалить домашку
+        <!-- Скрытые формы -->
+        <form
+          method="POST"
+          action="?/updateHomework"
+          use:enhance={() => {
+            handleSubmit();
+            return async ({ result }) => {
+              if (result.type === 'success') {
+                handleSuccess();
+              } else if (result.type === 'failure') {
+                handleError(result.data);
+              }
+              isSubmitting = false;
+            };
+          }}
+          class="hidden"
+          id="update-form"
+        >
+          <input
+            type="hidden"
+            name="exercises"
+            value={JSON.stringify(selectedExercises)}
+          />
+        </form>
+      </div>
+
+      <Dialog.Footer class="flex justify-between">
+        <Button
+          type="button"
+          variant="destructive"
+          onclick={handleDeleteClick}
+          class="gap-2"
+        >
+          <Trash2 class="w-4 h-4" />
+          Удалить домашку
+        </Button>
+
+        <div class="flex gap-3">
+          <Button type="button" variant="outline" onclick={handleClose}>
+            Отмена
           </Button>
 
-          <div class="flex gap-3">
-            <Button type="button" variant="outline" onclick={handleClose}>
-              Отмена
-            </Button>
-
-            <form
-              method="POST"
-              action="?/updateHomework"
-              use:enhance={() => {
-                handleSubmit();
-                return async ({ result }) => {
-                  if (result.type === 'success') {
-                    handleSuccess();
-                  } else if (result.type === 'failure') {
-                    handleError(result.data);
-                  }
-                  isSubmitting = false;
-                };
-              }}
-              class="contents"
-            >
-              <input
-                type="hidden"
-                name="exercises"
-                value={JSON.stringify(selectedExercises)}
-              />
-              <Button
-                type="submit"
-                disabled={isSubmitting ||
-                  selectedExercises.length === 0 ||
-                  !hasChanges()}
-              >
-                {#if isSubmitting}
-                  <Loader2 class="mr-2 h-4 w-4 animate-spin" />
-                {/if}
-                Сохранить изменения
-              </Button>
-            </form>
-          </div>
+          <Button
+            type="button"
+            onclick={() => {
+              (
+                document.getElementById('update-form') as HTMLFormElement
+              )?.requestSubmit();
+            }}
+            disabled={isSubmitting ||
+              selectedExercises.length === 0 ||
+              !hasChanges()}
+          >
+            {#if isSubmitting}
+              <LoaderCircle class="mr-2 h-4 w-4 animate-spin" />
+            {/if}
+            Сохранить изменения
+          </Button>
         </div>
-      </div>
+      </Dialog.Footer>
     {:else}
-      <!-- Подтверждение удаления -->
-      <div class="space-y-6">
-        <div class="flex items-center gap-3 text-red-600">
-          <AlertTriangle class="w-6 h-6" />
-          <h2 class="text-2xl font-bold">Подтверждение удаления</h2>
-        </div>
+      <Dialog.Header>
+        <Dialog.Title class="flex items-center gap-3 text-red-600">
+          <TriangleAlert class="w-6 h-6" />
+          Подтверждение удаления
+        </Dialog.Title>
+        <Dialog.Description>
+          Это действие нельзя будет отменить
+        </Dialog.Description>
+      </Dialog.Header>
 
+      <div class="space-y-6">
         <div class="p-4 bg-red-50 rounded-lg border border-red-200">
           <p class="text-red-800 mb-3">
             Вы действительно хотите удалить домашнее задание #{homework.id}?
@@ -248,58 +272,60 @@
           </p>
           <p class="text-gray-700">
             <strong>Создано:</strong>
-            {new Date(homework.created_at).toLocaleDateString('ru-RU')}
+            {format(new Date(homework.created_at), 'dd.MM.yyyy', {
+              locale: ru,
+            })}
           </p>
         </div>
 
-        <!-- Кнопки подтверждения -->
-        <div class="flex justify-end gap-3 pt-4 border-t">
-          <Button
-            type="button"
-            variant="outline"
-            onclick={handleDeleteCancel}
-            disabled={isDeleting}
-          >
-            Отмена
-          </Button>
-
-          <form
-            method="POST"
-            action="?/deleteHomework"
-            use:enhance={() => {
-              handleDeleteConfirm();
-              return async ({ result }) => {
-                if (result.type === 'success') {
-                  handleDeleteSuccess();
-                } else if (result.type === 'failure') {
-                  handleDeleteError(result.data);
-                }
-                isDeleting = false;
-              };
-            }}
-            class="contents"
-          >
-            <Button
-              type="submit"
-              variant="destructive"
-              disabled={isDeleting}
-              class="gap-2"
-            >
-              {#if isDeleting}
-                <Loader2 class="mr-2 h-4 w-4 animate-spin" />
-              {/if}
-              <Trash2 class="w-4 h-4" />
-              Да, удалить
-            </Button>
-          </form>
-        </div>
+        <!-- Скрытая форма удаления -->
+        <form
+          method="POST"
+          action="?/deleteHomework"
+          use:enhance={() => {
+            handleDeleteConfirm();
+            return async ({ result }) => {
+              if (result.type === 'success') {
+                handleDeleteSuccess();
+              } else if (result.type === 'failure') {
+                handleDeleteError(result.data);
+              }
+              isDeleting = false;
+            };
+          }}
+          class="hidden"
+          id="delete-form"
+        ></form>
       </div>
-    {/if}
-  {/snippet}
-</Dialog>
 
-<style>
-  :global(.contents) {
-    display: contents;
-  }
-</style>
+      <Dialog.Footer class="flex justify-end gap-3">
+        <Button
+          type="button"
+          variant="outline"
+          onclick={handleDeleteCancel}
+          disabled={isDeleting}
+        >
+          Отмена
+        </Button>
+
+        <Button
+          type="button"
+          variant="destructive"
+          onclick={() => {
+            (
+              document.getElementById('delete-form') as HTMLFormElement
+            )?.requestSubmit();
+          }}
+          disabled={isDeleting}
+          class="gap-2"
+        >
+          {#if isDeleting}
+            <LoaderCircle class="mr-2 h-4 w-4 animate-spin" />
+          {/if}
+          <Trash2 class="w-4 h-4" />
+          Да, удалить
+        </Button>
+      </Dialog.Footer>
+    {/if}
+  </Dialog.Content>
+</Dialog.Root>

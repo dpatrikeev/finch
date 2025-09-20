@@ -1,6 +1,6 @@
 <script lang="ts">
+  import { BookOpen, Target, Mail, CirclePlus, ChartBar } from 'lucide-svelte';
   import type { StudentInfo } from '$lib/utils/user';
-  import { BookOpen, Target, Mail, PlusCircle, BarChart3 } from 'lucide-svelte';
   import { Button } from '$lib/components/ui/button';
 
   interface Props {
@@ -97,7 +97,6 @@
     </div>
   </div>
 
-  <!-- Кнопки действий -->
   <div class="mt-6 pt-4 border-t space-y-2">
     <Button
       variant="outline"
@@ -105,17 +104,17 @@
       onclick={handleAssignHomework}
       class="w-full gap-2"
     >
-      <PlusCircle class="w-4 h-4" />
+      <CirclePlus class="w-4 h-4" />
       Назначить домашку
     </Button>
 
     <Button
       variant="ghost"
       size="sm"
-      href="/students/{student.id}/homework"
+      href="/students/{student.id}"
       class="w-full gap-2"
     >
-      <BarChart3 class="w-4 h-4" />
+      <ChartBar class="w-4 h-4" />
       Посмотреть статистику
     </Button>
   </div>

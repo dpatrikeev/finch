@@ -3,6 +3,7 @@
   import { Button } from '$lib/components/ui/button';
   import { ExerciseItem } from '$lib/components';
   import { SignedIn, SignedOut, SignInButton } from 'svelte-clerk';
+  import { BookOpen } from 'lucide-svelte';
 
   let { data }: { data: PageData } = $props();
 </script>
@@ -27,20 +28,25 @@
 
     <SignInButton asChild mode="modal">
       {#snippet children({ signIn })}
-        <Button onclick={signIn}>Войти</Button>
+        <Button onclick={signIn}>Начать обучение</Button>
       {/snippet}
     </SignInButton>
   </section>
 </SignedOut>
 
 <SignedIn>
-  <section class="mx-auto p-10">
-    <h1 class="text-3xl font-medium mb-8 text-slate-950">Список упражнений</h1>
+  <section class="mx-auto p-5 md:p-10">
+    <div class="flex items-center gap-3 mb-8">
+      <BookOpen class="w-8 h-8 text-primary" />
+      <h1 class="text-2xl md:text-3xl font-medium text-foreground">
+        Список упражнений
+      </h1>
+    </div>
 
-    <ul class="space-y-4">
+    <div class="space-y-4">
       {#each data.exercises as exercise}
         <ExerciseItem {exercise} status={data.exerciseStatuses[exercise.id]} />
       {/each}
-    </ul>
+    </div>
   </section>
 </SignedIn>
