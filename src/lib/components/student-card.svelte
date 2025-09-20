@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { BookOpen, Target, Mail, CirclePlus, ChartBar } from 'lucide-svelte';
+  import { BookOpen, Target, Mail, CirclePlus, User } from 'lucide-svelte';
   import type { StudentInfo } from '$lib/utils/user';
   import { Button } from '$lib/components/ui/button';
 
@@ -114,8 +114,8 @@
       href="/students/{student.id}"
       class="w-full gap-2"
     >
-      <ChartBar class="w-4 h-4" />
-      Посмотреть статистику
+      <User class="w-4 h-4" />
+      Открыть профиль
     </Button>
   </div>
 </div>

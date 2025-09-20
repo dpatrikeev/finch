@@ -89,7 +89,7 @@
 
       <div class="w-full md:w-auto md:ml-6">
         <Button
-          href="/{exercise.id}"
+          href="/exercises/{exercise.id}"
           variant="secondary"
           class="w-full md:w-auto group-hover:shadow-md transition-shadow"
           size="lg"

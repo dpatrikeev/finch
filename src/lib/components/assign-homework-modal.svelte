@@ -5,15 +5,23 @@
   import { Badge } from '$lib/components/ui/badge';
   import type { StudentInfo } from '$lib/utils/user';
   import { enhance } from '$app/forms';
+  import { toast } from 'svelte-sonner';
 
   interface Props {
     open?: boolean;
     student: StudentInfo | null;
     exercises: Array<{ id: string; title: string; description?: string }>;
     onclose?: () => void;
+    onassigned?: () => void;
   }
 
-  const { open = false, student, exercises, onclose }: Props = $props();
+  const {
+    open = false,
+    student,
+    exercises,
+    onclose,
+    onassigned,
+  }: Props = $props();
 
   let selectedExercises = $state<Set<string>>(new Set());
   let isSubmitting = $state(false);
@@ -132,10 +140,20 @@
           handleSubmit();
           return ({ result, update }) => {
             if (result.type === 'success') {
+              onassigned?.();
               handleClose();
+            } else if (result.type === 'failure') {
+              // Показываем ошибку
+              const errorMessage =
+                (result.data as any)?.error ||
+                'Произошла ошибка при назначении домашнего задания';
+              toast.error(errorMessage);
+              update();
+            } else {
+              // Обновляем при других типах результата
+              update();
             }
             isSubmitting = false;
-            update();
           };
         }}
         class="hidden"

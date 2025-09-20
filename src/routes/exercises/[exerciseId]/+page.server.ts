@@ -6,7 +6,7 @@ import { formatISO } from 'date-fns';
 import { updateHomeworkProgress } from '$lib/utils/homework';
 
 export const load: PageServerLoad = async ({ fetch, params, locals }) => {
-  const response = await fetch(`/exercises/${params.exercise}.json`);
+  const response = await fetch(`/exercises/${params.exerciseId}.json`);
 
   if (!response.ok) error(404, 'Упражнение с таким номером не найдено');
 
@@ -21,7 +21,7 @@ export const load: PageServerLoad = async ({ fetch, params, locals }) => {
       .from('answers_history')
       .select('*')
       .eq('user_id', auth.userId)
-      .eq('exercise_id', params.exercise)
+      .eq('exercise_id', params.exerciseId)
       .order('answered_at', { ascending: false });
 
     if (!historyError && data) {
@@ -57,7 +57,7 @@ export const actions: Actions = {
         .from('answers_history')
         .insert({
           user_id: auth.userId,
-          exercise_id: params.exercise,
+          exercise_id: params.exerciseId,
           selected_answer_id: selectedAnswerId,
           is_correct: isCorrect,
           answered_at: formatISO(new Date()),
@@ -72,7 +72,7 @@ export const actions: Actions = {
       await updateHomeworkProgress(
         locals,
         auth.userId,
-        params.exercise,
+        params.exerciseId,
         isCorrect
       );
 

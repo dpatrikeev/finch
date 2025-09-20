@@ -6,6 +6,7 @@
   import { ru } from 'date-fns/locale';
   import type { StudentInfo } from '$lib/utils/user';
   import EditHomeworkModal from '$lib/components/edit-homework-modal.svelte';
+  import { toast } from 'svelte-sonner';
   import {
     CircleCheck,
     CircleX,
@@ -70,6 +71,15 @@
   function handleEditClose() {
     showEditModal = false;
   }
+
+  // Функция для обработки успешного обновления домашки
+  const handleHomeworkUpdated = async () => {
+    // Небольшая задержка для лучшего UX (пользователь видит уведомление)
+    await new Promise((resolve) => setTimeout(resolve, 500));
+
+    // Перезагружаем страницу для обновления данных
+    window.location.reload();
+  };
 </script>
 
 <svelte:head>
@@ -286,7 +296,7 @@
               <Button
                 variant="outline"
                 size="sm"
-                href="/{exerciseStat.exercise_id}"
+                href="/exercises/{exerciseStat.exercise_id}"
                 class="text-xs md:text-sm px-3 py-1 md:px-4 md:py-2"
               >
                 <span class="md:hidden">Открыть</span>
@@ -399,6 +409,7 @@
     {student}
     {exercises}
     onclose={handleEditClose}
+    onupdated={handleHomeworkUpdated}
   />
 {/if}
 

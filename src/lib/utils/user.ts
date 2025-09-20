@@ -78,3 +78,44 @@ export const getTeacherStudents = async (locals: App.Locals) => {
 };
 
 export type StudentInfo = Awaited<ReturnType<typeof getTeacherStudents>>[0];
+
+export const getCurrentUserInfo = async (locals: App.Locals) => {
+  const auth = locals.auth();
+  const userId = auth.userId as string;
+
+  if (!userId) return null;
+
+  try {
+    const user = await clerkClient.users.getUser(userId);
+
+    // Получаем статистику пользователя
+    const { data: answers } = await supabase(locals)
+      .from('answers_history')
+      .select('exercise_id, is_correct')
+      .eq('user_id', userId);
+
+    // Подсчитываем уникальные упражнения и правильные ответы
+    const uniqueExercises = new Set(answers?.map((a) => a.exercise_id) || []);
+    const correctAnswers = answers?.filter((a) => a.is_correct).length || 0;
+    const totalExercises = uniqueExercises.size;
+
+    return {
+      id: user.id,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      email: user.emailAddresses[0]?.emailAddress,
+      imageUrl: user.imageUrl,
+      totalExercises,
+      correctAnswers,
+      accuracy:
+        totalExercises > 0
+          ? Math.round((correctAnswers / totalExercises) * 100)
+          : 0,
+    };
+  } catch (error) {
+    console.error('Error fetching current user info:', error);
+    return null;
+  }
+};
+
+export type UserInfo = Awaited<ReturnType<typeof getCurrentUserInfo>>;

@@ -1,28 +1,53 @@
 <script lang="ts">
-  import type { PageProps } from './$types';
   import { Button } from '$lib/components/ui/button';
   import { Badge } from '$lib/components/ui/badge';
-  import * as Card from '$lib/components/ui/card';
   import { formatDistance } from 'date-fns';
   import { ru } from 'date-fns/locale';
   import type { HomeworkWithProgress } from '$lib/utils/homework';
-  import type { UserInfo } from '$lib/utils/user';
+  import type { StudentInfo } from '$lib/utils/user';
+  import AssignHomeworkModal from '$lib/components/assign-homework-modal.svelte';
+  import { toast } from 'svelte-sonner';
   import {
     CircleCheck,
     Clock,
     CircleAlert,
-    BookOpenCheck,
-    BookOpen,
-    ListCheck,
+    ChartBar,
+    ArrowLeft,
     Mail,
+    BookOpen,
+    SquarePen,
+    Plus,
   } from 'lucide-svelte';
 
-  interface Props extends PageProps {}
+  interface Props {
+    data: {
+      student: StudentInfo;
+      homework: HomeworkWithProgress[];
+      exercises: Array<{ id: string; title: string; description?: string }>;
+      isTeacherView: boolean;
+    };
+  }
 
   const { data }: Props = $props();
+  const { student, homework, exercises } = data;
 
-  const homework: HomeworkWithProgress[] = data.homework;
-  const user: UserInfo = data.user;
+  // Состояние для модального окна назначения домашки
+  let showAssignModal = $state(false);
+
+  // Функция для обработки успешного назначения домашки
+  const handleHomeworkAssigned = async () => {
+    // Показываем уведомление об успехе
+    toast.success(
+      `Домашнее задание назначено студенту ${student.firstName} ${student.lastName}!`
+    );
+
+    // Небольшая задержка для лучшего UX (пользователь видит уведомление)
+    await new Promise((resolve) => setTimeout(resolve, 500));
+
+    // Перезагружаем страницу для обновления данных
+    // Это надежное решение для обновления после server actions в SvelteKit
+    window.location.reload();
+  };
 
   // Форматируем дату
   const formatDate = (dateStr: string) => {
@@ -106,116 +131,126 @@
   });
 </script>
 
+<svelte:head>
+  <title>Домашние задания: {student.firstName} {student.lastName} - Finch</title
+  >
+</svelte:head>
+
 <div class="container mx-auto px-4 py-4 md:py-8 max-w-6xl">
-  {#if homework.length === 0}
-    <div class="flex items-center gap-3 mb-8">
-      <BookOpenCheck class="w-6 h-6 text-primary" />
-      <h1 class="text-2xl md:text-3xl font-medium text-foreground">
-        Мои домашние задания
-      </h1>
-    </div>
+  <!-- Навигация назад -->
+  <div class="mb-4 md:mb-6">
+    <Button
+      variant="ghost"
+      href="/students"
+      class="gap-2 text-sm md:text-base px-2 md:px-4"
+    >
+      <ArrowLeft class="w-4 h-4" />
+      <span class="md:hidden">Назад</span>
+      <span class="hidden md:inline">Назад к студентам</span>
+    </Button>
+  </div>
 
-    <Card.Root class="text-center py-16">
-      <Card.Content class="space-y-4">
-        <div class="flex justify-center">
-          <div class="p-4 bg-muted rounded-full">
-            <ListCheck class="w-12 h-12 text-muted-foreground" />
-          </div>
-        </div>
-        <div class="space-y-2">
-          <h3 class="text-xl font-semibold text-foreground">
-            У вас пока нет домашних заданий
-          </h3>
-          <p class="text-muted-foreground max-w-md mx-auto">
-            Когда учитель даст вам задания, они появятся здесь
-          </p>
-        </div>
-      </Card.Content>
-    </Card.Root>
-  {:else}
-    <!-- Информация о пользователе -->
-    {#if user}
-      <div class="bg-white rounded-lg shadow-md border p-4 md:p-6 mb-4 md:mb-6">
+  <!-- Информация о студенте -->
+  <div class="bg-white rounded-lg shadow-md border p-4 md:p-6 mb-4 md:mb-6">
+    <div class="flex flex-col gap-4 md:flex-row md:items-center mb-4 md:mb-6">
+      {#if student.imageUrl}
+        <img
+          src={student.imageUrl}
+          alt="{student.firstName} {student.lastName}"
+          class="w-12 h-12 md:w-16 md:h-16 rounded-full self-start md:self-auto"
+        />
+      {:else}
         <div
-          class="flex flex-col gap-4 md:flex-row md:items-center mb-4 md:mb-6"
+          class="w-12 h-12 md:w-16 md:h-16 text-lg md:text-xl rounded-full bg-blue-500 flex items-center justify-center text-white font-bold self-start md:self-auto"
         >
-          {#if user.imageUrl}
-            <img
-              src={user.imageUrl}
-              alt="{user.firstName} {user.lastName}"
-              class="w-12 h-12 md:w-16 md:h-16 rounded-full self-start md:self-auto"
-            />
-          {:else}
-            <div
-              class="w-12 h-12 md:w-16 md:h-16 text-lg md:text-xl rounded-full bg-blue-500 flex items-center justify-center text-white font-bold self-start md:self-auto"
-            >
-              {user.firstName?.[0]?.toUpperCase()}{user.lastName?.[0]?.toUpperCase()}
-            </div>
-          {/if}
-
-          <div class="flex-1">
-            <h1 class="text-xl md:text-2xl font-bold text-gray-900 mb-1">
-              {user.firstName}
-              {user.lastName}
-            </h1>
-            <div class="flex items-center text-gray-600 mb-2">
-              <Mail class="w-4 h-4 mr-2" />
-              <span class="text-sm md:text-base">{user.email}</span>
-            </div>
-            <div
-              class="flex flex-col gap-1 md:flex-row md:items-center md:gap-6 text-xs md:text-sm text-gray-500"
-            >
-              <span>Общая точность: {user.accuracy}%</span>
-              <span>Выполнено упражнений: {user.totalExercises}</span>
-            </div>
-          </div>
+          {student.firstName?.[0]?.toUpperCase()}{student.lastName?.[0]?.toUpperCase()}
         </div>
+      {/if}
 
-        <!-- Общая статистика по домашкам -->
+      <div class="flex-1">
+        <h1 class="text-xl md:text-2xl font-bold text-gray-900 mb-1">
+          {student.firstName}
+          {student.lastName}
+        </h1>
+        <div class="flex items-center text-gray-600 mb-2">
+          <Mail class="w-4 h-4 mr-2" />
+          <span class="text-sm md:text-base">{student.email}</span>
+        </div>
         <div
-          class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 p-3 md:p-4 bg-gray-50 rounded-lg"
+          class="flex flex-col gap-1 md:flex-row md:items-center md:gap-6 text-xs md:text-sm text-gray-500"
         >
-          <div class="text-center">
-            <div class="text-xl md:text-2xl font-bold text-blue-600 mb-1">
-              {overallStats().totalHomework}
-            </div>
-            <div class="text-xs md:text-sm text-gray-600">Всего домашек</div>
-          </div>
-
-          <div class="text-center">
-            <div class="text-xl md:text-2xl font-bold text-green-600 mb-1">
-              {overallStats().completionRate}%
-            </div>
-            <div class="text-xs md:text-sm text-gray-600">
-              Завершено домашек
-            </div>
-          </div>
-
-          <div class="text-center">
-            <div class="text-xl md:text-2xl font-bold text-purple-600 mb-1">
-              {overallStats().exerciseCompletionRate}%
-            </div>
-            <div class="text-xs md:text-sm text-gray-600">
-              Выполнено упражнений
-            </div>
-          </div>
-
-          <div class="text-center">
-            <div class="text-xl md:text-2xl font-bold text-orange-600 mb-1">
-              {overallStats().accuracy}%
-            </div>
-            <div class="text-xs md:text-sm text-gray-600">Точность ответов</div>
-          </div>
+          <span>Общая точность: {student.accuracy}%</span>
+          <span>Выполнено упражнений: {student.totalExercises}</span>
         </div>
       </div>
-    {/if}
+    </div>
 
-    <!-- Список домашек -->
-    <div class="flex items-center gap-3 mb-4 md:mb-6">
+    <!-- Общая статистика по домашкам -->
+    <div
+      class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 p-3 md:p-4 bg-gray-50 rounded-lg"
+    >
+      <div class="text-center">
+        <div class="text-xl md:text-2xl font-bold text-blue-600 mb-1">
+          {overallStats().totalHomework}
+        </div>
+        <div class="text-xs md:text-sm text-gray-600">Всего домашек</div>
+      </div>
+
+      <div class="text-center">
+        <div class="text-xl md:text-2xl font-bold text-green-600 mb-1">
+          {overallStats().completionRate}%
+        </div>
+        <div class="text-xs md:text-sm text-gray-600">Завершено домашек</div>
+      </div>
+
+      <div class="text-center">
+        <div class="text-xl md:text-2xl font-bold text-purple-600 mb-1">
+          {overallStats().exerciseCompletionRate}%
+        </div>
+        <div class="text-xs md:text-sm text-gray-600">Выполнено упражнений</div>
+      </div>
+
+      <div class="text-center">
+        <div class="text-xl md:text-2xl font-bold text-orange-600 mb-1">
+          {overallStats().accuracy}%
+        </div>
+        <div class="text-xs md:text-sm text-gray-600">Точность ответов</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Список домашек -->
+  <div class="flex items-center justify-between mb-4 md:mb-6">
+    <div class="flex items-center gap-3">
       <BookOpen class="w-5 h-5 md:w-6 md:h-6" />
       <h2 class="text-xl md:text-2xl font-medium">Домашние задания</h2>
     </div>
+    {#if homework.length > 0}
+      <Button
+        variant="outline"
+        onclick={() => (showAssignModal = true)}
+        class="gap-2"
+      >
+        <Plus class="w-4 h-4" />
+        <span>Назначить еще</span>
+      </Button>
+    {/if}
+  </div>
 
+  {#if homework.length === 0}
+    <div class="text-center py-12 bg-white rounded-lg border">
+      <div class="text-gray-500 text-lg mb-4">
+        Студенту пока не назначено домашних заданий
+      </div>
+      <p class="text-gray-400 mb-6">
+        Назначьте домашние задания, выбрав упражнения из доступного списка
+      </p>
+      <Button onclick={() => (showAssignModal = true)} class="gap-2">
+        <Plus class="w-4 h-4" />
+        Назначить домашку
+      </Button>
+    </div>
+  {:else}
     <div class="space-y-4 md:space-y-6">
       {#each homework as hw}
         <div class="bg-white rounded-lg shadow-md border p-4 md:p-6">
@@ -233,24 +268,32 @@
                 </Badge>
               </div>
 
-              {#if hw.is_completed || hw.progress_percentage > 0}
-                <div class="flex items-center gap-2 w-full md:w-auto">
-                  {#if hw.is_completed}
-                    <Badge
-                      class="bg-green-100 text-green-700 border-green-200 hover:bg-green-200"
-                    >
-                      <CircleCheck class="w-3 h-3 mr-1" />
-                      <span>Завершено</span>
-                    </Badge>
-                  {:else if hw.progress_percentage > 0}
-                    <Badge
-                      class="bg-blue-100 text-blue-700 border-blue-200 hover:bg-blue-200"
-                    >
-                      В процессе
-                    </Badge>
-                  {/if}
-                </div>
-              {/if}
+              <div class="flex items-center gap-2 w-full md:w-auto">
+                {#if hw.is_completed}
+                  <Badge
+                    class="bg-green-100 text-green-700 border-green-200 hover:bg-green-200"
+                  >
+                    <CircleCheck class="w-3 h-3 mr-1" />
+                    <span>Завершено</span>
+                  </Badge>
+                {:else if hw.progress_percentage > 0}
+                  <Badge
+                    class="bg-blue-100 text-blue-700 border-blue-200 hover:bg-blue-200"
+                  >
+                    В процессе
+                  </Badge>
+                {/if}
+
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  href="/students/{student.id}/homework/{hw.id}"
+                  class="gap-2 text-xs md:text-sm px-3 py-1 md:px-4 md:py-2"
+                >
+                  <ChartBar class="w-3 h-3 md:w-4 md:h-4" />
+                  <span>Подробнее</span>
+                </Button>
+              </div>
             </div>
 
             <p class="text-sm md:text-base text-gray-600 mb-3">
@@ -336,16 +379,29 @@
                       </div>
                     </div>
 
-                    <div class="mt-3 md:mt-0">
+                    <div
+                      class="flex flex-col gap-2 md:flex-row md:items-center md:gap-3"
+                    >
+                      {#if exerciseStatus?.attempts > 0}
+                        <div class="text-xs text-gray-500 md:text-right">
+                          <div>Попыток: {exerciseStatus.attempts}</div>
+                          {#if exerciseStatus.last_attempt_at}
+                            <div>
+                              Последняя: {formatDate(
+                                exerciseStatus.last_attempt_at
+                              )}
+                            </div>
+                          {/if}
+                        </div>
+                      {/if}
+
                       <Button
-                        variant={exerciseStatus?.completed
-                          ? 'secondary'
-                          : 'outline'}
+                        variant="outline"
                         size="sm"
                         href="/exercises/{exerciseId}"
                         class="text-xs md:text-sm px-3 py-1 md:px-4 md:py-2"
                       >
-                        {exerciseStatus?.completed ? 'Повторить' : 'Решать'}
+                        <span>Посмотреть упражнение</span>
                       </Button>
                     </div>
                   </div>
@@ -362,6 +418,15 @@
     </div>
   {/if}
 </div>
+
+<!-- Модальное окно для назначения домашки -->
+<AssignHomeworkModal
+  open={showAssignModal}
+  {student}
+  {exercises}
+  onclose={() => (showAssignModal = false)}
+  onassigned={handleHomeworkAssigned}
+/>
 
 <style>
   .container {

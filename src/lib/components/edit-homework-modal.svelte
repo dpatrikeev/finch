@@ -23,9 +23,11 @@
     student: StudentInfo;
     exercises: { id: string; title: string; description?: string }[];
     onclose?: () => void;
+    onupdated?: () => void;
   }
 
-  const { open, homework, student, exercises, onclose }: Props = $props();
+  const { open, homework, student, exercises, onclose, onupdated }: Props =
+    $props();
 
   let selectedExercises: string[] = $state([...homework.exercises]);
   let isSubmitting = $state(false);
@@ -54,6 +56,7 @@
     toast.success('Домашнее задание успешно обновлено!');
     isSubmitting = false;
     handleClose();
+    onupdated?.();
   }
 
   function handleError(error: any) {
@@ -77,8 +80,8 @@
     toast.success('Домашнее задание успешно удалено!');
     isDeleting = false;
     handleClose();
-    // Перенаправляем на страницу домашек студента
-    goto(`/students/${student.id}/homework`);
+    // Перенаправляем на страницу студента (без вызова onupdated, так как меняем страницу)
+    goto(`/students/${student.id}`);
   }
 
   function handleDeleteError(error: any) {
@@ -147,9 +150,11 @@
               >
                 <div class="flex items-center gap-3 text-left">
                   {#if selectedExercises.includes(exercise.id)}
-                    <Check class="w-5 h-5 text-blue-600" />
+                    <Check class="flex-shrink-0 w-5 h-5 text-blue-600" />
                   {:else}
-                    <div class="w-5 h-5 border rounded-full bg-white"></div>
+                    <div
+                      class="flex-shrink-0 w-5 h-5 border rounded-full bg-white"
+                    ></div>
                   {/if}
                   <div>
                     <div class="flex items-center gap-2">
@@ -204,7 +209,9 @@
         </form>
       </div>
 
-      <Dialog.Footer class="flex justify-between">
+      <Dialog.Footer
+        class="sm:flex-row sm:justify-between flex justify-between"
+      >
         <Button
           type="button"
           variant="destructive"
