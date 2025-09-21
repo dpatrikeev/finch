@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { Attributes } from '../types';
+  import type { Attributes } from '../types/notation.types';
 
   type Props = {
     readonly attributes: Attributes;

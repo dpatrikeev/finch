@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { Measure } from '../types';
+  import type { Measure } from '../types/notation.types';
 
   import Note from './Note.svelte';
   import Element from './Element.svelte';

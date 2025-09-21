@@ -1,3 +1,3 @@
 export { default as Title } from './title.svelte';
-export { default as ExerciseItem } from './exercise-item.svelte';
+export { ExerciseItem } from '$lib/features/exercises';
 export { default as StudentCard } from './student-card.svelte';

@@ -4,24 +4,16 @@
   import { Badge } from '$lib/components/ui/badge';
   import * as Tooltip from '$lib/components/ui/tooltip';
   import * as Card from '$lib/components/ui/card';
+  import type { ExerciseItemProps } from '../types/exercises.types';
+  import {
+    getExerciseButtonText,
+    getExerciseStatusText,
+    getExerciseStatusDescription,
+    isExerciseCompleted,
+    isExerciseCorrect,
+  } from '../utils/exercises.utils';
 
-  interface Exercise {
-    id: string;
-    title: string;
-    description: string;
-  }
-
-  interface ExerciseStatus {
-    isCompleted: boolean;
-    isCorrect: boolean;
-  }
-
-  interface Props {
-    exercise: Exercise;
-    status?: ExerciseStatus;
-  }
-
-  let { exercise, status }: Props = $props();
+  let { exercise, status }: ExerciseItemProps = $props();
 </script>
 
 <Card.Root
@@ -40,37 +32,35 @@
             </Badge>
           </div>
 
-          {#if status?.isCompleted}
+          {#if isExerciseCompleted(status)}
             <Tooltip.Provider>
               <Tooltip.Root>
                 <Tooltip.Trigger>
-                  {#if status.isCorrect}
+                  {#if isExerciseCorrect(status)}
                     <Badge
                       class="text-xs bg-green-100 text-green-700 border-green-200 hover:bg-green-200"
                     >
                       <CircleCheck class="w-3 h-3 mr-1" />
-                      Решено
+                      {getExerciseStatusText(status)}
                     </Badge>
                   {:else}
                     <Badge
                       class="text-xs bg-red-100 text-red-700 border-red-200 hover:bg-red-200"
                     >
                       <CircleX class="w-3 h-3 mr-1" />
-                      Ошибка
+                      {getExerciseStatusText(status)}
                     </Badge>
                   {/if}
                 </Tooltip.Trigger>
                 <Tooltip.Content>
-                  {status.isCorrect
-                    ? 'Упражнение выполнено правильно'
-                    : 'Упражнение выполнено с ошибками'}
+                  {getExerciseStatusDescription(status)}
                 </Tooltip.Content>
               </Tooltip.Root>
             </Tooltip.Provider>
           {:else}
             <Badge class="text-xs bg-gray-100 text-gray-600 border-gray-200">
               <CircleX class="w-3 h-3 mr-1 opacity-50" />
-              Не решено
+              {getExerciseStatusText(status)}
             </Badge>
           {/if}
         </div>
@@ -94,7 +84,7 @@
           class="w-full md:w-auto group-hover:shadow-md transition-shadow"
           size="lg"
         >
-          {status?.isCompleted ? 'Повторить' : 'Начать'}
+          {getExerciseButtonText(status)}
           <ArrowRight
             class="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform"
           />

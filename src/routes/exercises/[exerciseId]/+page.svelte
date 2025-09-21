@@ -1,7 +1,7 @@
 <script lang="ts">
   import type { PageData } from './$types';
   import { Title } from '$lib/components';
-  import Quiz from '$lib/notation/Quiz.svelte';
+  import { Quiz } from '$lib/features/quiz';
 
   let { data }: { data: PageData } = $props();
   let { exercise, answersHistory } = $derived(data);

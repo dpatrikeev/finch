@@ -1,5 +1,9 @@
 <script lang="ts">
-  import type { Measure as MeasureType, Options, Score } from '../types';
+  import type {
+    Measure as MeasureType,
+    Options,
+    Score,
+  } from '../types/notation.types';
   import Measure from './Measure.svelte';
 
   type Props = {
