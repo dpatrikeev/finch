@@ -256,7 +256,7 @@ export const getHomeworkStats = async (
       .select('*')
       .eq('id', homeworkId)
       .eq('student_id', studentId)
-      .single();
+      .maybeSingle();
 
     if (error || !homework) {
       return null;

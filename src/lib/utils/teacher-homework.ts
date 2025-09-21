@@ -1,5 +1,5 @@
 import { supabase } from '$lib/supabase';
-import type { HomeworkItem } from './homework';
+import type { HomeworkItem } from '$lib/features/homework/types/homework.types';
 
 // Утилиты для учителей по работе с домашними заданиями
 

@@ -18,10 +18,15 @@ async function loadHomeworkStats(
       .select('*')
       .eq('id', homeworkId)
       .eq('student_id', studentId)
-      .single();
+      .maybeSingle();
 
-    if (homeworkError || !homework) {
+    if (homeworkError) {
       console.error('Error fetching homework:', homeworkError);
+      return null;
+    }
+
+    if (!homework) {
+      console.error('Homework not found');
       return null;
     }
 

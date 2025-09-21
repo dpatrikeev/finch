@@ -3,7 +3,7 @@ import { error, fail } from '@sveltejs/kit';
 import type { Exercise } from '$lib/notation/types';
 import { supabase } from '$lib/supabase';
 import { formatISO } from 'date-fns';
-import { updateHomeworkProgress } from '$lib/utils/homework';
+import { createUpdateHomeworkProgressAction } from '$lib/features/homework/api';
 
 export const load: PageServerLoad = async ({ fetch, params, locals }) => {
   const response = await fetch(`/exercises/${params.exerciseId}.json`);
@@ -69,13 +69,17 @@ export const actions: Actions = {
       }
 
       // Обновляем прогресс домашки, если это упражнение является частью домашки
-      // Используем функцию из старого API, которая еще не перенесена
-      await updateHomeworkProgress(
-        locals,
-        auth.userId,
-        params.exerciseId,
-        isCorrect
-      );
+      const updateAction = await createUpdateHomeworkProgressAction();
+      const updateFormData = new FormData();
+      updateFormData.set('exerciseId', params.exerciseId);
+      updateFormData.set('isCorrect', isCorrect.toString());
+      updateFormData.set('userAnswer', selectedAnswerId);
+
+      const mockRequest = {
+        formData: () => Promise.resolve(updateFormData),
+      } as Request;
+
+      await updateAction({ request: mockRequest, locals } as any);
 
       return { success: true };
     } catch (err) {
