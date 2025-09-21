@@ -1,28 +1,17 @@
 <script lang="ts">
   import { BookOpen, Target, Mail, User } from 'lucide-svelte';
-  import type { StudentInfo } from '$lib/utils/user';
   import { Button } from '$lib/components/ui/button';
   import { AssignHomeworkButton } from '$lib/features/homework';
+  import {
+    getAccuracyColor,
+    getAccuracyTextColor,
+    formatStudentInitials,
+    formatStudentFullName,
+  } from '../utils/students.utils';
+  import type { StudentCardProps } from '../types/students.types';
+  import type { StudentInfo as OldStudentInfo } from '$lib/utils/user';
 
-  interface Props {
-    student: StudentInfo;
-    exercises: Array<{ id: string; title: string; description?: string }>;
-    onassigned?: () => void;
-  }
-
-  const { student, exercises, onassigned }: Props = $props();
-
-  const getAccuracyColor = (accuracy: number) => {
-    if (accuracy >= 80) return 'bg-green-500';
-    if (accuracy >= 60) return 'bg-yellow-500';
-    return 'bg-red-500';
-  };
-
-  const getAccuracyTextColor = (accuracy: number) => {
-    if (accuracy >= 80) return 'text-green-600';
-    if (accuracy >= 60) return 'text-yellow-600';
-    return 'text-red-600';
-  };
+  const { student, exercises, onassigned }: StudentCardProps = $props();
 </script>
 
 <div
@@ -32,20 +21,19 @@
     {#if student.imageUrl}
       <img
         src={student.imageUrl}
-        alt="{student.firstName} {student.lastName}"
+        alt={formatStudentFullName(student.firstName, student.lastName)}
         class="w-12 h-12 rounded-full mr-4"
       />
     {:else}
       <div
         class="w-12 h-12 rounded-full bg-blue-500 flex items-center justify-center text-white font-medium mr-4"
       >
-        {student.firstName?.[0]?.toUpperCase()}{student.lastName?.[0]?.toUpperCase()}
+        {formatStudentInitials(student.firstName, student.lastName)}
       </div>
     {/if}
     <div class="flex-1">
       <h3 class="text-lg font-semibold text-gray-900">
-        {student.firstName}
-        {student.lastName}
+        {formatStudentFullName(student.firstName, student.lastName)}
       </h3>
       <div class="flex items-center text-gray-500 text-sm">
         <Mail class="w-4 h-4 mr-1" />
@@ -92,14 +80,19 @@
     </div>
   </div>
 
-  <div class="mt-6 pt-4 border-t space-y-2">
-    <AssignHomeworkButton {student} {exercises} {onassigned} />
+  <div class="mt-6 flex items-center gap-2 flex-col">
+    <AssignHomeworkButton
+      student={student as OldStudentInfo}
+      {exercises}
+      {onassigned}
+      class="w-full flex-1 min-h-10"
+    />
 
     <Button
       variant="ghost"
       size="sm"
       href="/students/{student.id}"
-      class="w-full gap-2"
+      class="w-full flex-1 min-h-10"
     >
       <User class="w-4 h-4" />
       Открыть профиль
