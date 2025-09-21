@@ -1,29 +1,17 @@
 <script lang="ts">
   import type { PageData } from './$types';
   import { Users, GraduationCap } from 'lucide-svelte';
-  import type { StudentInfo } from '$lib/utils/user';
   import * as Card from '$lib/components/ui/card';
   import StudentCard from '$lib/components/student-card.svelte';
-  import AssignHomeworkModal from '$lib/components/assign-homework-modal.svelte';
   import { toast } from 'svelte-sonner';
   import { page } from '$app/state';
 
   let { data }: { data: PageData } = $props();
   const { students, exercises } = data;
 
-  let showAssignModal = $state(false);
-  let selectedStudent = $state<StudentInfo | null>(null);
-
-  const handleAssignHomework = (
-    event: CustomEvent<{ student: StudentInfo }>
-  ) => {
-    selectedStudent = event.detail.student;
-    showAssignModal = true;
-  };
-
-  const handleCloseModal = () => {
-    showAssignModal = false;
-    selectedStudent = null;
+  const handleAssigned = () => {
+    // Обновляем страницу после назначения домашнего задания
+    window.location.reload();
   };
 
   // Показываем уведомление об успешном назначении
@@ -116,16 +104,8 @@
 
     <div class="grid gap-6 grid-cols-1 md:grid-cols-2 xl:grid-cols-3">
       {#each students as student}
-        <StudentCard {student} onassignHomework={handleAssignHomework} />
+        <StudentCard {student} {exercises} onassigned={handleAssigned} />
       {/each}
     </div>
   {/if}
 </section>
-
-<!-- Модальное окно для назначения домашки -->
-<AssignHomeworkModal
-  open={showAssignModal}
-  student={selectedStudent}
-  {exercises}
-  onclose={handleCloseModal}
-/>

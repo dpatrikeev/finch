@@ -2,7 +2,7 @@
   import { Button } from '$lib/components/ui/button';
   import { Badge } from '$lib/components/ui/badge';
   import { UserButton } from 'svelte-clerk';
-  import { Users, BookOpen } from 'lucide-svelte';
+  import { Users, BookOpenCheck } from 'lucide-svelte';
   import type { DesktopMenuProps } from '../types/header.types';
   import { getNavigationItems, shouldShowBadge } from '../utils/header.utils';
 
@@ -12,7 +12,7 @@
 
   const iconMap = {
     Users,
-    BookOpen,
+    BookOpenCheck,
   };
 </script>
 

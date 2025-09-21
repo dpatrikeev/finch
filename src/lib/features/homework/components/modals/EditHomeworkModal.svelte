@@ -14,20 +14,17 @@
   import { goto } from '$app/navigation';
   import { format } from 'date-fns';
   import { ru } from 'date-fns/locale';
-  import type { StudentInfo } from '$lib/utils/user';
-  import type { HomeworkItem } from '$lib/utils/homework';
+  import type { EditHomeworkProps } from '../../types/homework.types';
+  import { hasExerciseChanges } from '../../utils/homework.utils';
 
-  interface Props {
-    open: boolean;
-    homework: HomeworkItem;
-    student: StudentInfo;
-    exercises: { id: string; title: string; description?: string }[];
-    onclose?: () => void;
-    onupdated?: () => void;
-  }
-
-  const { open, homework, student, exercises, onclose, onupdated }: Props =
-    $props();
+  const {
+    open,
+    homework,
+    student,
+    exercises,
+    onclose,
+    onupdated,
+  }: EditHomeworkProps = $props();
 
   let selectedExercises: string[] = $state([...homework.exercises]);
   let isSubmitting = $state(false);
@@ -91,11 +88,9 @@
   }
 
   // Проверяем, есть ли изменения
-  const hasChanges = $derived(() => {
-    const originalSorted = [...homework.exercises].sort();
-    const selectedSorted = [...selectedExercises].sort();
-    return JSON.stringify(originalSorted) !== JSON.stringify(selectedSorted);
-  });
+  const hasChanges = $derived(() =>
+    hasExerciseChanges(homework.exercises, selectedExercises)
+  );
 </script>
 
 <Dialog.Root {open} onOpenChange={(newOpen) => !newOpen && handleClose()}>
@@ -126,7 +121,7 @@
           </div>
           <p class="text-blue-700">
             Студент: <span class="font-medium"
-              >{student.firstName} {student.lastName}</span
+              >{student.firstName || ''} {student.lastName || ''}</span
             >
             ({student.email})
           </p>
@@ -270,8 +265,8 @@
         <div class="p-4 bg-gray-50 rounded-lg">
           <p class="text-gray-700 mb-2">
             <strong>Студент:</strong>
-            {student.firstName}
-            {student.lastName}
+            {student.firstName || ''}
+            {student.lastName || ''}
           </p>
           <p class="text-gray-700 mb-2">
             <strong>Упражнений:</strong>

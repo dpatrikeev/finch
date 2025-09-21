@@ -22,7 +22,7 @@ export function getNavigationItems(
     items.push({
       href: '/homework',
       label: 'Моя домашка',
-      icon: 'BookOpen',
+      icon: 'BookOpenCheck',
       showBadge: newHomeworkCount > 0,
       badgeCount: newHomeworkCount,
     });

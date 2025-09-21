@@ -69,6 +69,7 @@ export const actions: Actions = {
       }
 
       // Обновляем прогресс домашки, если это упражнение является частью домашки
+      // Используем функцию из старого API, которая еще не перенесена
       await updateHomeworkProgress(
         locals,
         auth.userId,

@@ -1,7 +1,7 @@
 import type { PageServerLoad, Actions } from './$types';
 import { error, fail } from '@sveltejs/kit';
 import { getTeacherStudents } from '$lib/utils/user';
-import { getHomeworkWithProgress } from '$lib/utils/homework';
+import { loadStudentHomework } from '$lib/features/homework';
 import { assignHomeworkToStudent } from '$lib/utils/teacher-homework';
 import { supabase } from '$lib/supabase';
 
@@ -23,7 +23,7 @@ export const load: PageServerLoad = async ({ params, locals }) => {
   }
 
   // Получаем домашки студента с прогрессом
-  const homework = await getHomeworkWithProgress(locals, studentId);
+  const homework = await loadStudentHomework(locals, studentId);
 
   // Получаем список доступных упражнений из базы данных
   const { data: exercises, error: exercisesError } = await supabase(locals)

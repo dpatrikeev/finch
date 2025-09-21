@@ -1,12 +1,12 @@
 import type { PageServerLoad } from './$types';
-import { getHomeworkWithProgress } from '$lib/utils/homework';
+import { loadStudentHomework } from '$lib/features/homework';
 import { getCurrentUserInfo } from '$lib/utils/user';
 
 export const load: PageServerLoad = async ({ locals, parent }) => {
   const { userId } = await parent();
 
   const [homeworkWithProgress, userInfo] = await Promise.all([
-    getHomeworkWithProgress(locals, userId),
+    loadStudentHomework(locals, userId),
     getCurrentUserInfo(locals),
   ]);
 

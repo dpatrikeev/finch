@@ -25,7 +25,7 @@ describe('header-utils', () => {
       expect(items[0]).toEqual({
         href: '/homework',
         label: 'Моя домашка',
-        icon: 'BookOpen',
+        icon: 'BookOpenCheck',
         showBadge: true,
         badgeCount: 5,
       });

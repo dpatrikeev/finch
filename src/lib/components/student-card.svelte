@@ -1,14 +1,16 @@
 <script lang="ts">
-  import { BookOpen, Target, Mail, CirclePlus, User } from 'lucide-svelte';
+  import { BookOpen, Target, Mail, User } from 'lucide-svelte';
   import type { StudentInfo } from '$lib/utils/user';
   import { Button } from '$lib/components/ui/button';
+  import { AssignHomeworkButton } from '$lib/features/homework';
 
   interface Props {
     student: StudentInfo;
-    onassignHomework?: (event: CustomEvent<{ student: StudentInfo }>) => void;
+    exercises: Array<{ id: string; title: string; description?: string }>;
+    onassigned?: () => void;
   }
 
-  const { student, onassignHomework }: Props = $props();
+  const { student, exercises, onassigned }: Props = $props();
 
   const getAccuracyColor = (accuracy: number) => {
     if (accuracy >= 80) return 'bg-green-500';
@@ -20,13 +22,6 @@
     if (accuracy >= 80) return 'text-green-600';
     if (accuracy >= 60) return 'text-yellow-600';
     return 'text-red-600';
-  };
-
-  const handleAssignHomework = () => {
-    const event = new CustomEvent('assignHomework', {
-      detail: { student },
-    });
-    onassignHomework?.(event);
   };
 </script>
 
@@ -98,15 +93,7 @@
   </div>
 
   <div class="mt-6 pt-4 border-t space-y-2">
-    <Button
-      variant="outline"
-      size="sm"
-      onclick={handleAssignHomework}
-      class="w-full gap-2"
-    >
-      <CirclePlus class="w-4 h-4" />
-      Назначить домашку
-    </Button>
+    <AssignHomeworkButton {student} {exercises} {onassigned} />
 
     <Button
       variant="ghost"

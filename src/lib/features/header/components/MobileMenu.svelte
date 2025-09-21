@@ -2,7 +2,7 @@
   import { Button } from '$lib/components/ui/button';
   import { Badge } from '$lib/components/ui/badge';
   import * as Sheet from '$lib/components/ui/sheet';
-  import { Menu, Users, BookOpen } from 'lucide-svelte';
+  import { Menu, Users, BookOpenCheck } from 'lucide-svelte';
   import { UserButton } from 'svelte-clerk';
   import type { MobileMenuProps } from '../types/header.types';
   import { getNavigationItems, shouldShowBadge } from '../utils/header.utils';
@@ -19,7 +19,7 @@
 
   const iconMap = {
     Users,
-    BookOpen,
+    BookOpenCheck,
   };
 </script>
 

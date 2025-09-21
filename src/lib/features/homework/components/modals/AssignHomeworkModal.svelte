@@ -3,17 +3,9 @@
   import * as Dialog from '$lib/components/ui/dialog';
   import { Button } from '$lib/components/ui/button';
   import { Badge } from '$lib/components/ui/badge';
-  import type { StudentInfo } from '$lib/utils/user';
   import { enhance } from '$app/forms';
   import { toast } from 'svelte-sonner';
-
-  interface Props {
-    open?: boolean;
-    student: StudentInfo | null;
-    exercises: Array<{ id: string; title: string; description?: string }>;
-    onclose?: () => void;
-    onassigned?: () => void;
-  }
+  import type { AssignHomeworkProps } from '../../types/homework.types';
 
   const {
     open = false,
@@ -21,7 +13,7 @@
     exercises,
     onclose,
     onassigned,
-  }: Props = $props();
+  }: AssignHomeworkProps = $props();
 
   let selectedExercises = $state<Set<string>>(new Set());
   let isSubmitting = $state(false);
@@ -68,8 +60,8 @@
         </div>
         <div>
           <h3 class="text-sm md:text-base font-medium text-gray-900">
-            {student.firstName}
-            {student.lastName}
+            {student.firstName || ''}
+            {student.lastName || ''}
           </h3>
           <p class="text-xs md:text-sm text-gray-600">
             {student.email}

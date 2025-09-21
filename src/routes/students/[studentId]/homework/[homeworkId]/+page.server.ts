@@ -1,8 +1,62 @@
 import type { PageServerLoad, Actions } from './$types';
 import { error, fail } from '@sveltejs/kit';
 import { getTeacherStudents } from '$lib/utils/user';
-import { getHomeworkStats } from '$lib/utils/homework';
 import { supabase } from '$lib/supabase';
+import { clerkClient } from 'svelte-clerk/server';
+import type { HomeworkStats } from '$lib/features/homework/types/homework.types';
+import { createHomeworkStats } from '$lib/features/homework/utils/homework.utils';
+
+async function loadHomeworkStats(
+  locals: App.Locals,
+  homeworkId: number,
+  studentId: string
+): Promise<HomeworkStats | null> {
+  try {
+    // Получаем домашнее задание
+    const { data: homework, error: homeworkError } = await supabase(locals)
+      .from('homework')
+      .select('*')
+      .eq('id', homeworkId)
+      .eq('student_id', studentId)
+      .single();
+
+    if (homeworkError || !homework) {
+      console.error('Error fetching homework:', homeworkError);
+      return null;
+    }
+
+    // Получаем информацию о студенте через Clerk
+    let student;
+    try {
+      const user = await clerkClient.users.getUser(studentId);
+      student = {
+        student_id: user.id,
+        first_name: user.firstName || '',
+        last_name: user.lastName || '',
+        email: user.emailAddresses[0]?.emailAddress || '',
+      };
+    } catch (error) {
+      console.error('Error fetching student:', error);
+      return null;
+    }
+
+    // Получаем записи ответов
+    const { data: answerRecords, error: answersError } = await supabase(locals)
+      .from('answers_history')
+      .select('*')
+      .in('exercise_id', homework.exercises)
+      .eq('user_id', studentId);
+
+    if (answersError) {
+      console.error('Error fetching answer records:', answersError);
+    }
+
+    return createHomeworkStats(homework, student, answerRecords || []);
+  } catch (error) {
+    console.error('Error in loadHomeworkStats:', error);
+    return null;
+  }
+}
 
 export const load: PageServerLoad = async ({ params, locals }) => {
   const auth = locals.auth();
@@ -27,7 +81,7 @@ export const load: PageServerLoad = async ({ params, locals }) => {
   }
 
   // Получаем статистику по домашке
-  const stats = await getHomeworkStats(locals, homeworkId, studentId);
+  const stats = await loadHomeworkStats(locals, homeworkId, studentId);
 
   if (!stats) {
     error(404, 'Домашнее задание не найдено');
@@ -47,7 +101,6 @@ export const load: PageServerLoad = async ({ params, locals }) => {
     student,
     stats,
     exercises: exercises || [],
-    isTeacherView: true,
   };
 };
 
