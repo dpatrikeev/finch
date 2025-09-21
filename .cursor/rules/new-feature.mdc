@@ -1,0 +1,324 @@
+---
+alwaysApply: true
+---
+
+# Архитектурные правила для Finch
+
+## Структура проекта
+
+### Обязательная структура фичи
+
+```
+src/lib/features/[feature-name]/
+├── api/
+│   ├── actions.ts              # Server actions
+│   ├── queries.ts              # Load functions  
+│   └── index.ts                # Публичный API фичи
+├── stores/
+│   └── [feature]-store.svelte.ts   # Состояние с рунами если требуется
+├── components/
+│   └── # Презентационные компоненты
+├── utils/
+│   └── [feature]-utils.ts      # Утилиты, всегда чистые функции
+├── types/
+│   └── [feature]-types.ts      # TypeScript типы
+├── tests/                      # Тесты внутри фичи
+│   ├── stores/
+│   ├── utils/
+│   └── api/
+└── [Feature].svelte            # Главный компонент-менеджер фичи
+```
+
+Если утилит или типов мало, то можно просто создать types.ts и utils.ts для упрощения структуры файлов.
+
+## Правила архитектуры
+
+### 1. Изоляция фич
+
+**✅ МОЖНО:**
+- Фича зависит от `core/` и общих components, utils, и т.д.
+- Фича экспортирует публичный API через `index.ts`
+- Фича содержит все свои тесты в `tests/`
+
+**❌ НЕЛЬЗЯ:**
+- Прямые импорты между фичами
+- Импорт внутренних модулей фичи извне (только через `index.ts`)
+- Глобальные зависимости внутри фич (кроме `core/` и общих вещей)
+
+### 2. Разделение компонентов
+
+**Главный компонент фичи (`[Feature].svelte`):**
+- Находится в корне папки фичи
+- Управляет состоянием через stores (если нужны)
+- Содержит бизнес-логику фичи
+- Координирует презентационные компоненты
+- Является единственной точкой входа в фичу
+- Если требуется, может быть несколько фичей компонентов внтури папки фичи (например, у фичи студент может быть карточка студента и его профиль)
+
+**Презентационные компоненты (`components/`):**
+- Получают данные через props
+- Эмитят события наверх
+- НЕ содержат бизнес-логики
+- НЕ используют stores напрямую
+- Используются только внутри главного компонента фичи
+
+### 3. Stores с рунами (опционально)
+
+**Создавать store только если:**
+- Фича имеет сложное состояние
+- Нужна реактивность между компонентами
+- Состояние должно сохраняться между рендерами
+
+**Обязательные паттерны:**
+```typescript
+export function create[Feature]Store() {
+  // Приватное состояние
+  let data = $state([]);
+  let loading = $state(false);
+  let error = $state(null);
+
+  // Вычисляемые значения
+  const computed = $derived(() => {
+    // логика вычислений
+  });
+
+  // Публичный API (только геттеры для состояния)
+  return {
+    get data() { return data; },
+    get loading() { return loading; },
+    get error() { return error; },
+    get computed() { return computed; },
+    
+    // Методы для изменения состояния
+    loadData,
+    addItem,
+    updateItem
+  };
+}
+```
+
+### 4. Utils - всегда чистые функции
+
+**Правила для `[feature]-utils.ts`:**
+- Только чистые функции без побочных эффектов
+- Не зависят от внешнего состояния
+- Не содержат состояние
+- Легко тестируются
+- Могут использоваться в любом контексте
+- Один файл на фичу для простоты
+
+**Примеры:**
+```typescript
+// homework-utils.ts
+export function calculateProgress(completed: number, total: number): number {
+  return total > 0 ? Math.round((completed / total) * 100) : 0;
+}
+
+export function formatHomeworkDate(dateStr: string): string {
+  return formatDistance(new Date(dateStr), new Date(), { locale: ru });
+}
+
+export function validateExercises(exercises: string[]): boolean {
+  return exercises.length > 0 && exercises.every(id => id.trim().length > 0);
+}
+```
+
+### 5. Types - один файл типов
+
+**Правила для `[feature]-types.ts`:**
+- Все TypeScript типы фичи в одном файле
+- Экспорт через `export type` или `export interface`
+- Четкие, описательные имена
+
+### 6. API слой
+
+**actions.ts - Server Actions:**
+```typescript
+export function create[Action]Action() {
+  return async (event: RequestEvent) => {
+    // логика action
+  };
+}
+
+// Объект для удобного импорта
+export const [feature]Actions = {
+  create: create[Action]Action(),
+  update: create[Update]Action()
+};
+```
+
+**queries.ts - Load Functions:**
+```typescript
+export async function load[Data](locals: App.Locals, params: any) {
+  // логика загрузки
+}
+```
+
+**index.ts - Публичный API:**
+```typescript
+// Экспорт всего публичного API фичи
+export * from './api';
+export * from './stores';  // только если есть
+export * from './types';
+export { default as [Feature] } from './[Feature].svelte';
+```
+
+### 7. Тестирование
+
+**Структура тестов:**
+```
+[feature]/tests/
+├── utils/
+│   └── [feature]-utils.test.ts    # Тесты утилит (обязательно)
+├── stores/  
+│   └── [feature]-store.test.ts    # Только если есть store
+└── api/
+    └── actions.test.ts            # Тесты server actions
+```
+
+**Обязательные тесты:**
+- Все функции в `utils/` (100% покрытие)
+- Все методы stores (если есть)
+- Все server actions (с моками)
+
+## Координация фич
+
+### Через страницы (Routes)
+
+**+page.server.ts - Композиция API:**
+```typescript
+import { homeworkActions, homeworkQueries } from '$lib/features/homework';
+import { studentActions, studentQueries } from '$lib/features/students';
+
+export const actions = {
+  ...homeworkActions,
+  ...studentActions
+};
+
+export const load = async ({ locals, params }) => {
+  const [homework, student] = await Promise.all([
+    homeworkQueries.loadData(locals, params),
+    studentQueries.loadData(locals, params)
+  ]);
+  
+  return { homework, student };
+};
+```
+
+**+page.svelte - Композиция UI:**
+```svelte
+<script>
+  import { Homework } from '$lib/features/homework';
+  import { Students } from '$lib/features/students';
+  
+  const { data } = $props();
+</script>
+
+<Students student={data.student} />
+<Homework homework={data.homework} />
+```
+
+## Правила рефакторинга
+
+### 1. Создание новой фичи
+
+1. Создать структуру папок согласно шаблону
+2. Выделить чистые функции в `utils/[feature]-utils.ts`
+3. Создать типы в `types/[feature]-types.ts`
+4. Создать store только если нужно сложное состояние
+5. Создать API слой (actions + queries)
+6. Создать главный компонент `[Feature].svelte`
+7. Создать презентационные компоненты в `components/`
+8. Написать тесты в папке `tests/` (обязательно для utils)
+9. Создать публичный API в `index.ts`
+
+### 2. Принятие решения о store
+
+**Создавать store если:**
+- Состояние используется в нескольких компонентах
+- Нужны сложные вычисления ($derived)
+- Состояние должно сохраняться между навигацией
+- Есть асинхронные операции с состоянием
+
+**НЕ создавать store если:**
+- Простые данные передаются через props
+- Состояние локальное для одного компонента
+- Нет сложной логики состояния
+
+## Запрещенные паттерны
+
+**❌ НЕ ДЕЛАТЬ:**
+
+1. **Состояние в utils:**
+```typescript
+// ПЛОХО - utils должны быть чистыми функциями
+let cache = [];
+export function addToCache(item) {
+  cache.push(item);
+}
+```
+
+2. **Бизнес-логика в презентационных компонентах:**
+```svelte
+<!-- ПЛОХО -->
+<script>
+  function calculateComplexStats() {
+    // сложная логика должна быть в utils или главном компоненте
+  }
+</script>
+```
+
+## Обязательные требования
+
+### Для каждой фичи:
+
+- [ ] Структура папок соответствует шаблону
+- [ ] Есть главный компонент `[Feature].svelte` в корне фичи
+- [ ] Все утилиты в одном файле `[feature]-utils.ts` (чистые функции)
+- [ ] Все типы в одном файле `[feature]-types.ts`
+- [ ] Store создается только при необходимости
+- [ ] Презентационные компоненты только в `components/`
+- [ ] Публичный API в index.ts
+- [ ] Тесты в папке `tests/` (обязательно для utils)
+- [ ] Нет прямых зависимостей от других фич
+
+### Пример минимальной фичи (без store):
+
+```
+src/lib/features/simple-feature/
+├── api/
+│   └── index.ts
+├── components/
+│   └── SimpleCard.svelte
+├── simple-utils.ts
+├── simple-types.ts
+├── tests/
+│   └── simple-utils.test.ts
+└── Simple.svelte
+```
+
+### Пример сложной фичи (с store):
+
+```
+src/lib/features/complex-feature/
+├── api/
+│   ├── actions.ts
+│   ├── queries.ts
+│   └── index.ts
+├── stores/
+│   └── complex-store.svelte.ts
+├── components/
+│   ├── ComplexCard.svelte
+│   └── ComplexList.svelte
+├── utils/
+│   └── complex-utils.ts
+│   └── another-complex-utils.ts
+├── types/
+│   └── complex-types.ts
+│   └── another-complex-types.ts
+├── tests/
+│   ├── stores/
+│   ├── utils/
+│   └── api/
+└── Complex.svelte
+```
