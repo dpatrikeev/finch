@@ -6,7 +6,7 @@
   import { ClerkProvider } from 'svelte-clerk';
 
   import { Toaster } from '$lib/components/ui/sonner';
-  import { Header } from '$lib/components';
+  import { Header } from '$lib/features/header';
   import { ruRU } from '@clerk/localizations';
   import type { UserRole } from '$lib/utils/user';
 
