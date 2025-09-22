@@ -1,6 +1,6 @@
 <script lang="ts">
   import * as Card from '$lib/components/ui/card';
-  import type { StudentsStatsData } from '../types/students.types';
+  import type { StudentsStatsData } from '../types';
 
   interface Props {
     stats: StudentsStatsData;

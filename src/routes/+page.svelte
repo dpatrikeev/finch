@@ -1,7 +1,7 @@
 <script lang="ts">
   import type { PageData } from './$types';
   import { Button } from '$lib/components/ui/button';
-  import { ExerciseItem } from '$lib/components';
+  import { ExerciseItem } from '$lib/features/exercises';
   import { SignedIn, SignedOut, SignInButton } from 'svelte-clerk';
   import { BookOpen } from 'lucide-svelte';
 

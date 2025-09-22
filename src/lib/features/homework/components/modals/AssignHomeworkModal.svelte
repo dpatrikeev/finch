@@ -3,8 +3,8 @@
   import * as Dialog from '$lib/components/ui/dialog';
   import { Button } from '$lib/components/ui/button';
   import { Badge } from '$lib/components/ui/badge';
-  import { enhance } from '$app/forms';
   import { toast } from 'svelte-sonner';
+  import { assignHomework } from '$lib/features/students/data.remote';
   import type { AssignHomeworkProps } from '../../types/homework.types';
 
   const {
@@ -34,8 +34,29 @@
     onclose?.();
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
+    if (!student || selectedExercises.size === 0) return;
+
     isSubmitting = true;
+
+    try {
+      const result = await assignHomework({
+        studentId: student.id,
+        exercises: Array.from(selectedExercises),
+      });
+
+      toast.success(result.message || 'Домашнее задание успешно назначено');
+      onassigned?.();
+      handleClose();
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error
+          ? error.message
+          : 'Произошла ошибка при назначении домашнего задания';
+      toast.error(errorMessage);
+    } finally {
+      isSubmitting = false;
+    }
   };
 </script>
 
@@ -123,40 +144,6 @@
           </div>
         {/if}
       </div>
-
-      <!-- Форма для отправки -->
-      <form
-        method="POST"
-        action="?/assignHomework"
-        use:enhance={() => {
-          handleSubmit();
-          return ({ result, update }) => {
-            if (result.type === 'success') {
-              onassigned?.();
-              handleClose();
-            } else if (result.type === 'failure') {
-              // Показываем ошибку
-              const errorMessage =
-                (result.data as any)?.error ||
-                'Произошла ошибка при назначении домашнего задания';
-              toast.error(errorMessage);
-              update();
-            } else {
-              // Обновляем при других типах результата
-              update();
-            }
-            isSubmitting = false;
-          };
-        }}
-        class="hidden"
-      >
-        <input type="hidden" name="studentId" value={student.id} />
-        <input
-          type="hidden"
-          name="exercises"
-          value={JSON.stringify(Array.from(selectedExercises))}
-        />
-      </form>
     {:else}
       <div class="text-center py-8 text-gray-500">
         <p>Студент не выбран</p>
@@ -168,11 +155,7 @@
         Отмена
       </Button>
       <Button
-        onclick={() => {
-          if (selectedExercises.size > 0) {
-            document.querySelector('form')?.requestSubmit();
-          }
-        }}
+        onclick={handleSubmit}
         disabled={selectedExercises.size === 0 || isSubmitting}
       >
         {#if isSubmitting}

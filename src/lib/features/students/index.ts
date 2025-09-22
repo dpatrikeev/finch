@@ -1,5 +1,5 @@
 export * from './components';
-export * from './types/students.types';
-export * from './utils/students.utils';
+export * from './types';
+export * from './data.remote';
 
 export { default as Students } from './Students.svelte';

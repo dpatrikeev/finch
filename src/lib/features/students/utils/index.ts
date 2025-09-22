@@ -2,47 +2,34 @@ import type {
   StudentInfo,
   StudentsStatsData,
   HomeworkWithProgress,
-} from '../types/students.types';
+} from '../types';
 
-/**
- * Вычисляет цвет для отображения точности студента
- */
-export function getAccuracyColor(accuracy: number): string {
-  if (accuracy >= 80) return 'bg-green-500';
-  if (accuracy >= 60) return 'bg-yellow-500';
-  return 'bg-red-500';
+interface FullName {
+  first: string | null;
+  last: string | null;
 }
 
-/**
- * Вычисляет цвет текста для отображения точности студента
- */
-export function getAccuracyTextColor(accuracy: number): string {
-  if (accuracy >= 80) return 'text-green-600';
-  if (accuracy >= 60) return 'text-yellow-600';
-  return 'text-red-600';
-}
+export const formatFullName = ({ first, last }: FullName) => {
+  return [first, last].filter(Boolean).join(' ');
+};
 
-/**
- * Форматирует инициалы студента из имени и фамилии
- */
-export function formatStudentInitials(
-  firstName: string | null,
-  lastName: string | null
-): string {
-  const first = firstName?.[0]?.toUpperCase() || '';
-  const last = lastName?.[0]?.toUpperCase() || '';
-  return first + last;
-}
+export const formatInitials = ({ first, last }: FullName) => {
+  return ((first?.[0] || '') + (last?.[0] || '')).toUpperCase();
+};
 
-/**
- * Форматирует полное имя студента
- */
-export function formatStudentFullName(
-  firstName: string | null,
-  lastName: string | null
-): string {
-  return [firstName, lastName].filter(Boolean).join(' ');
-}
+export const getAccuracyColorClass = (accuracy: number) =>
+  accuracy >= 80
+    ? 'bg-green-500'
+    : accuracy >= 60
+    ? 'bg-yellow-500'
+    : 'bg-red-500';
+
+export const getAccuracyTextClass = (accuracy: number) =>
+  accuracy >= 80
+    ? 'text-green-600'
+    : accuracy >= 60
+    ? 'text-yellow-600'
+    : 'text-red-600';
 
 /**
  * Вычисляет общую статистику по списку студентов
@@ -102,16 +89,6 @@ export function getExerciseStatus(
 }
 
 /**
- * Получает цвет прогресс-бара в зависимости от процента выполнения
- */
-export function getProgressColor(percentage: number): string {
-  if (percentage === 100) return 'bg-green-500';
-  if (percentage >= 70) return 'bg-blue-500';
-  if (percentage >= 40) return 'bg-yellow-500';
-  return 'bg-gray-300';
-}
-
-/**
  * Вычисляет общую статистику по всем домашним заданиям студента
  */
 export function calculateOverallHomeworkStats(
@@ -126,8 +103,9 @@ export function calculateOverallHomeworkStats(
   const completedExercises = homework.reduce((sum, hw) => {
     return (
       sum +
-      Object.values(hw.exercises_status).filter((status) => status.completed)
-        .length
+      Object.values(hw.exercises_status).filter(
+        (status: any) => status?.completed
+      ).length
     );
   }, 0);
   const totalAttempts = homework.reduce(
@@ -160,7 +138,6 @@ export function calculateOverallHomeworkStats(
         : 0,
   };
 }
-
 /**
  * Фильтрует студентов по поисковому запросу
  */
@@ -172,10 +149,10 @@ export function filterStudents(
 
   const query = searchQuery.toLowerCase();
   return students.filter((student) => {
-    const fullName = formatStudentFullName(
-      student.firstName,
-      student.lastName
-    ).toLowerCase();
+    const fullName = [student.firstName, student.lastName]
+      .filter(Boolean)
+      .join(' ')
+      .toLowerCase();
     const email = student.email.toLowerCase();
     return fullName.includes(query) || email.includes(query);
   });
@@ -191,8 +168,8 @@ export function sortStudents(
   return [...students].sort((a, b) => {
     switch (sortBy) {
       case 'name':
-        const nameA = formatStudentFullName(a.firstName, a.lastName);
-        const nameB = formatStudentFullName(b.firstName, b.lastName);
+        const nameA = [a.firstName, a.lastName].filter(Boolean).join(' ');
+        const nameB = [b.firstName, b.lastName].filter(Boolean).join(' ');
         return nameA.localeCompare(nameB);
       case 'accuracy':
         return b.accuracy - a.accuracy;
@@ -202,19 +179,4 @@ export function sortStudents(
         return 0;
     }
   });
-}
-
-/**
- * Проверяет, валидны ли данные студента
- */
-export function isValidStudentInfo(student: any): student is StudentInfo {
-  return (
-    typeof student === 'object' &&
-    student !== null &&
-    typeof student.id === 'string' &&
-    typeof student.email === 'string' &&
-    typeof student.totalExercises === 'number' &&
-    typeof student.correctAnswers === 'number' &&
-    typeof student.accuracy === 'number'
-  );
 }

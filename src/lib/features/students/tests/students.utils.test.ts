@@ -1,84 +1,13 @@
 import { describe, it, expect } from 'vitest';
 import {
-  getAccuracyColor,
-  getAccuracyTextColor,
-  formatStudentInitials,
-  formatStudentFullName,
   calculateStudentsStats,
-  getProgressColor,
   calculateOverallHomeworkStats,
   filterStudents,
   sortStudents,
-  isValidStudentInfo,
 } from '../utils/students.utils';
-import type {
-  StudentInfo,
-  HomeworkWithProgress,
-} from '../types/students.types';
+import type { StudentInfo, HomeworkWithProgress } from '../types';
 
 describe('Students Utils', () => {
-  describe('getAccuracyColor', () => {
-    it('should return green for high accuracy', () => {
-      expect(getAccuracyColor(85)).toBe('bg-green-500');
-    });
-
-    it('should return yellow for medium accuracy', () => {
-      expect(getAccuracyColor(65)).toBe('bg-yellow-500');
-    });
-
-    it('should return red for low accuracy', () => {
-      expect(getAccuracyColor(45)).toBe('bg-red-500');
-    });
-  });
-
-  describe('getAccuracyTextColor', () => {
-    it('should return green text for high accuracy', () => {
-      expect(getAccuracyTextColor(85)).toBe('text-green-600');
-    });
-
-    it('should return yellow text for medium accuracy', () => {
-      expect(getAccuracyTextColor(65)).toBe('text-yellow-600');
-    });
-
-    it('should return red text for low accuracy', () => {
-      expect(getAccuracyTextColor(45)).toBe('text-red-600');
-    });
-  });
-
-  describe('formatStudentInitials', () => {
-    it('should format initials correctly', () => {
-      expect(formatStudentInitials('John', 'Doe')).toBe('JD');
-    });
-
-    it('should handle null values', () => {
-      expect(formatStudentInitials(null, 'Doe')).toBe('D');
-      expect(formatStudentInitials('John', null)).toBe('J');
-      expect(formatStudentInitials(null, null)).toBe('');
-    });
-
-    it('should handle empty strings', () => {
-      expect(formatStudentInitials('', 'Doe')).toBe('D');
-      expect(formatStudentInitials('John', '')).toBe('J');
-    });
-  });
-
-  describe('formatStudentFullName', () => {
-    it('should format full name correctly', () => {
-      expect(formatStudentFullName('John', 'Doe')).toBe('John Doe');
-    });
-
-    it('should handle null values', () => {
-      expect(formatStudentFullName(null, 'Doe')).toBe('Doe');
-      expect(formatStudentFullName('John', null)).toBe('John');
-      expect(formatStudentFullName(null, null)).toBe('');
-    });
-
-    it('should handle empty strings', () => {
-      expect(formatStudentFullName('', 'Doe')).toBe('Doe');
-      expect(formatStudentFullName('John', '')).toBe('John');
-    });
-  });
-
   describe('calculateStudentsStats', () => {
     const mockStudents: StudentInfo[] = [
       {
@@ -107,17 +36,15 @@ describe('Students Utils', () => {
       const stats = calculateStudentsStats(mockStudents, 15);
       expect(stats.totalStudents).toBe(2);
       expect(stats.totalExercises).toBe(15);
-      expect(stats.activeStudents).toBe(1);
+      expect(stats.activeStudents).toBe(1); // Только John решал задачи
       expect(stats.totalCorrectAnswers).toBe(8);
     });
-  });
 
-  describe('getProgressColor', () => {
-    it('should return correct colors for different percentages', () => {
-      expect(getProgressColor(100)).toBe('bg-green-500');
-      expect(getProgressColor(75)).toBe('bg-blue-500');
-      expect(getProgressColor(45)).toBe('bg-yellow-500');
-      expect(getProgressColor(20)).toBe('bg-gray-300');
+    it('should handle empty students array', () => {
+      const stats = calculateStudentsStats([], 10);
+      expect(stats.totalStudents).toBe(0);
+      expect(stats.activeStudents).toBe(0);
+      expect(stats.totalCorrectAnswers).toBe(0);
     });
   });
 
@@ -135,6 +62,7 @@ describe('Students Utils', () => {
         },
         is_completed: false,
         total_attempts: 3,
+        correct_attempts: 1,
         progress_percentage: 50,
       },
       {
@@ -148,6 +76,7 @@ describe('Students Utils', () => {
         },
         is_completed: true,
         total_attempts: 1,
+        correct_attempts: 1,
         progress_percentage: 100,
       },
     ];
@@ -158,8 +87,19 @@ describe('Students Utils', () => {
       expect(stats.completedHomework).toBe(1);
       expect(stats.totalExercises).toBe(3);
       expect(stats.completedExercises).toBe(2);
+      expect(stats.totalAttempts).toBe(4);
+      expect(stats.correctAttempts).toBe(2);
       expect(stats.completionRate).toBe(50);
       expect(stats.exerciseCompletionRate).toBe(67);
+      expect(stats.accuracy).toBe(50);
+    });
+
+    it('should handle empty homework array', () => {
+      const stats = calculateOverallHomeworkStats([]);
+      expect(stats.totalHomework).toBe(0);
+      expect(stats.completedHomework).toBe(0);
+      expect(stats.completionRate).toBe(0);
+      expect(stats.accuracy).toBe(0);
     });
   });
 
@@ -203,6 +143,11 @@ describe('Students Utils', () => {
       const filtered = filterStudents(mockStudents, '');
       expect(filtered).toHaveLength(2);
     });
+
+    it('should be case insensitive', () => {
+      const filtered = filterStudents(mockStudents, 'JOHN');
+      expect(filtered).toHaveLength(1);
+    });
   });
 
   describe('sortStudents', () => {
@@ -229,7 +174,7 @@ describe('Students Utils', () => {
       },
     ];
 
-    it('should sort by name', () => {
+    it('should sort by name (ascending)', () => {
       const sorted = sortStudents(mockStudents, 'name');
       expect(sorted[0].firstName).toBe('Alice');
       expect(sorted[1].firstName).toBe('John');
@@ -246,27 +191,11 @@ describe('Students Utils', () => {
       expect(sorted[0].totalExercises).toBe(10);
       expect(sorted[1].totalExercises).toBe(5);
     });
-  });
 
-  describe('isValidStudentInfo', () => {
-    it('should validate correct student info', () => {
-      const validStudent = {
-        id: '1',
-        firstName: 'John',
-        lastName: 'Doe',
-        email: 'john@example.com',
-        imageUrl: null,
-        totalExercises: 10,
-        correctAnswers: 8,
-        accuracy: 80,
-      };
-      expect(isValidStudentInfo(validStudent)).toBe(true);
-    });
-
-    it('should reject invalid student info', () => {
-      expect(isValidStudentInfo(null)).toBe(false);
-      expect(isValidStudentInfo({})).toBe(false);
-      expect(isValidStudentInfo({ id: 123 })).toBe(false);
+    it('should not mutate original array', () => {
+      const original = [...mockStudents];
+      sortStudents(mockStudents, 'name');
+      expect(mockStudents).toEqual(original);
     });
   });
 });
