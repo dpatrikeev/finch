@@ -35,7 +35,7 @@
     cn,
     type WithElementRef,
     type WithoutChildrenOrChild,
-  } from '$lib/utils';
+  } from '$lib/utils/cn';
   import { mergeProps } from 'bits-ui';
   import type { ComponentProps, Snippet } from 'svelte';
   import type { HTMLAttributes } from 'svelte/elements';

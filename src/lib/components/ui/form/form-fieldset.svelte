@@ -4,7 +4,7 @@
 >
   import * as FormPrimitive from 'formsnap';
   import type { FormPath } from 'sveltekit-superforms';
-  import { cn, type WithoutChild } from '$lib/utils';
+  import { cn, type WithoutChild } from '$lib/utils/cn';
 
   let {
     ref = $bindable(null),

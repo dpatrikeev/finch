@@ -1,7 +1,7 @@
 import { withClerkHandler } from 'svelte-clerk/server';
 import { sequence } from '@sveltejs/kit/hooks';
 import { redirect } from '@sveltejs/kit';
-import { getUserRole } from '$lib/utils/user';
+import { getUserRole } from '$lib/remote/user.remote';
 import type { Handle } from '@sveltejs/kit';
 
 const clerkHandler = withClerkHandler();
@@ -12,7 +12,6 @@ const roleBasedHandler: Handle = async ({ event, resolve }) => {
   const userId = auth.userId as string;
   const userRole = await getUserRole(userId);
 
-  // Проверяем защищенные маршруты
   if (pathname.startsWith('/students')) {
     if (userRole !== 'teacher') {
       redirect(302, '/');

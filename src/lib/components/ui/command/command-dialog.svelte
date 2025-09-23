@@ -6,7 +6,7 @@
   import type { Snippet } from 'svelte';
   import Command from './command.svelte';
   import * as Dialog from '$lib/components/ui/dialog/index.js';
-  import type { WithoutChildrenOrChild } from '$lib/utils';
+  import type { WithoutChildrenOrChild } from '$lib/utils/cn';
 
   let {
     open = $bindable(false),

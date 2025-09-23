@@ -1,11 +1,7 @@
 <script lang="ts">
-  import type { PageData } from './$types';
   import { Button } from '$lib/components/ui/button';
-  import { ExerciseItem } from '$lib/features/exercises';
   import { SignedIn, SignedOut, SignInButton } from 'svelte-clerk';
   import { BookOpen } from 'lucide-svelte';
-
-  let { data }: { data: PageData } = $props();
 </script>
 
 <SignedOut>
@@ -41,12 +37,6 @@
       <h1 class="text-2xl md:text-3xl font-medium text-foreground">
         Список упражнений
       </h1>
-    </div>
-
-    <div class="space-y-4">
-      {#each data.exercises as exercise}
-        <ExerciseItem {exercise} status={data.exerciseStatuses[exercise.id]} />
-      {/each}
     </div>
   </section>
 </SignedIn>

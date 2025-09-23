@@ -1,6 +1,6 @@
 <script lang="ts">
   import { Pagination as PaginationPrimitive } from 'bits-ui';
-  import { cn } from '$lib/utils';
+  import { cn } from '$lib/utils/cn';
   import {
     type Props,
     buttonVariants,

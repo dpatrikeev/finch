@@ -1,4 +1,4 @@
-import type { WithElementRef } from '$lib/utils';
+import type { WithElementRef } from '$lib/utils/cn';
 import type {
   EmblaCarouselSvelteType,
   default as emblaCarouselSvelte,

@@ -2,20 +2,22 @@
   import '../app.css';
 
   import type { Snippet } from 'svelte';
-  import type { InitialState } from '@clerk/types';
   import { ClerkProvider } from 'svelte-clerk';
-
   import { Toaster } from '$lib/components/ui/sonner';
-  import { Header } from '$lib/features/header';
   import { ruRU } from '@clerk/localizations';
-  import type { UserRole } from '$lib/utils/user';
+  import Header from '$lib/components/header/header.svelte';
+  import type { UserRole } from '$lib/user.remote';
 
   interface Props {
     children: Snippet;
-    data: { clerk: InitialState; role: UserRole; newHomeworkCount: number };
+    data: {
+      userRole: UserRole;
+      userId: string;
+    };
   }
 
   const { children, data }: Props = $props();
+  const { userRole, userId } = data;
 </script>
 
 <svelte:head>
@@ -30,7 +32,7 @@
 
 <ClerkProvider localization={ruRU}>
   <main class="min-h-screen relative overflow-hidden">
-    <Header role={data.role} newHomeworkCount={data.newHomeworkCount} />
+    <Header {userRole} {userId} />
     {@render children()}
   </main>
   <Toaster />

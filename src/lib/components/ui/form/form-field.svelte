@@ -4,7 +4,7 @@
 >
   import * as FormPrimitive from 'formsnap';
   import type { FormPath } from 'sveltekit-superforms';
-  import { cn, type WithElementRef, type WithoutChildren } from '$lib/utils';
+  import { cn, type WithElementRef, type WithoutChildren } from '$lib/utils/cn';
   import type { HTMLAttributes } from 'svelte/elements';
 
   let {

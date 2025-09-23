@@ -5,7 +5,7 @@
     cn,
     type WithoutChild,
     type WithoutChildrenOrChild,
-  } from '$lib/utils';
+  } from '$lib/utils/cn';
 
   let {
     ref = $bindable(null),
