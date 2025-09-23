@@ -6,12 +6,11 @@
   import { Toaster } from '$lib/components/ui/sonner';
   import { ruRU } from '@clerk/localizations';
   import Header from '$lib/components/header/header.svelte';
-  import type { UserRole } from '$lib/user.remote';
 
   interface Props {
     children: Snippet;
     data: {
-      userRole: UserRole;
+      userRole: UserPublicMetadata['role'];
       userId: string;
     };
   }

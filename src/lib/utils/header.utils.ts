@@ -1,9 +1,10 @@
-import type { UserRole } from '$lib/remote/user.remote';
+import type { NavigationItem } from '$lib/types/header.types';
 import { BookOpenCheck, Users } from 'lucide-svelte';
-import type { NavigationItem } from './types';
 import type { Component } from 'svelte';
 
-export function getNavigationItems(role: UserRole): NavigationItem[] {
+export function getNavigationItems(
+  role: UserPublicMetadata['role']
+): NavigationItem[] {
   const items: NavigationItem[] = [];
 
   if (role === 'teacher') {

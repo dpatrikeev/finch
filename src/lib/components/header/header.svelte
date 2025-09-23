@@ -1,12 +1,11 @@
 <script lang="ts">
   import { SignedIn, UserButton } from 'svelte-clerk';
-  import type { UserRole } from '$lib/remote/user.remote';
   import { getNavigationItems } from '$lib/utils/header.utils';
   import Logo from './logo.svelte';
   import Menu from './menu.svelte';
 
   interface Props {
-    userRole: UserRole;
+    userRole: UserPublicMetadata['role'];
     userId: string;
   }
 
