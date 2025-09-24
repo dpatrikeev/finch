@@ -16,7 +16,7 @@
   }
 
   const { children, data }: Props = $props();
-  const { userRole, userId } = data;
+  const { userRole, userId } = $derived(data);
 </script>
 
 <svelte:head>

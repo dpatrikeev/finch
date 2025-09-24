@@ -4,10 +4,7 @@
   import { BookOpen } from 'lucide-svelte';
   import { Spinner } from '$lib/components';
   import ExerciseItem from '$lib/components/exercises/exercises-item.svelte';
-  import {
-    getExercises,
-    getExerciseStatus,
-  } from '$lib/remote/exercises.remote';
+  import { getExercises } from '$lib/remote/exercises.remote';
 </script>
 
 <SignedOut>
@@ -50,10 +47,7 @@
         <Spinner />
       {:then exercises}
         {#each exercises as exercise}
-          <ExerciseItem
-            {exercise}
-            status={await getExerciseStatus(exercise.id)}
-          />
+          <ExerciseItem {exercise} />
         {/each}
       {/await}
     </div>

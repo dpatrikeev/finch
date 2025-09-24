@@ -32,3 +32,13 @@ export type AnswerHistory = {
   is_correct: boolean;
   answered_at: string;
 };
+
+export interface ExerciseStat {
+  exercise_id: string;
+  attempts: number;
+  correct_attempts: number;
+  is_completed: boolean;
+  last_attempt_at: string | null;
+  first_attempt_at: string | null;
+  answers_history: AnswerHistory[];
+}

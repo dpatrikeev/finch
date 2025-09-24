@@ -1,6 +1,14 @@
 import { subDays, formatISO } from 'date-fns';
 import { command, getRequestEvent, query } from '$app/server';
-import { array, minLength, object, pipe, string } from 'valibot';
+import {
+  array,
+  minLength,
+  number,
+  object,
+  pipe,
+  string,
+  integer,
+} from 'valibot';
 import { supabase } from '$lib/server/database';
 import { error } from '@sveltejs/kit';
 import {
@@ -71,7 +79,6 @@ export const assignHomework = command(
 
     // Обновляем связанные queries
     await getStudentHomework(studentId).refresh();
-    await getMyHomework().refresh();
 
     return { success: true, homework: data };
   }
@@ -120,17 +127,56 @@ export const getStudentHomework = query(
 );
 
 /**
- * Загружает домашние задания текущего пользователя
+ * Обновляет домашнее задание
  */
-export const getMyHomework = query(
-  async (): Promise<HomeworkWithProgress[]> => {
+export const updateHomework = command(
+  object({
+    homeworkId: pipe(number(), integer()),
+    exercises: pipe(
+      array(string()),
+      minLength(1, 'Необходимо выбрать хотя бы одно упражнение')
+    ),
+  }),
+  async ({ homeworkId, exercises }) => {
     const { locals } = getRequestEvent();
     const auth = locals.auth();
 
     if (!auth.userId) {
-      return [];
+      return { success: false, homework: null };
     }
 
-    return await getStudentHomework(auth.userId);
+    // Валидация упражнений
+    const validation = validateExercises(exercises);
+    if (!validation.isValid) {
+      throw error(400, validation.error);
+    }
+
+    // Получаем homework для проверки прав и студента
+    const { data: homework, error: fetchError } = await supabase(locals)
+      .from('homework')
+      .select('teacher_id, student_id')
+      .eq('id', homeworkId)
+      .single();
+
+    if (fetchError || !homework || homework.teacher_id !== auth.userId) {
+      throw error(403, 'Домашнее задание не найдено или не принадлежит вам');
+    }
+
+    const { data, error: updateError } = await supabase(locals)
+      .from('homework')
+      .update({ exercises })
+      .eq('id', homeworkId)
+      .select()
+      .single();
+
+    if (updateError) {
+      console.error('Error updating homework:', updateError);
+      throw error(500, 'Ошибка при обновлении домашнего задания');
+    }
+
+    // Обновляем связанные queries
+    await getStudentHomework(homework.student_id).refresh();
+
+    return { success: true, homework: data };
   }
 );

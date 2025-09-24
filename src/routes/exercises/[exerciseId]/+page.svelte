@@ -1,6 +1,7 @@
 <script lang="ts">
   import { Title } from '$lib/components';
   import type { PageData } from './$types';
+  import Quiz from '$lib/components/quiz/quiz.svelte';
 
   let { data }: { data: PageData } = $props();
   let { exercise, answersHistory } = $derived(data);
@@ -12,5 +13,5 @@
     <p class="text-lg mb-6 text-slate-700">{exercise.description}</p>
   {/if}
 
-  <!-- <Quiz {exercise} {answersHistory} /> -->
+  <Quiz {exercise} {answersHistory} />
 </section>

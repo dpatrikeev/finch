@@ -4,9 +4,9 @@
   import { getTeacherStudents } from '$lib/remote/students.remote';
   import { calculateStudentsStats } from '$lib/utils/students.utils';
   import type { StudentInfo, ExerciseInfo } from '$lib/types/students.types';
-  import EmptyStudents from './empty-students.svelte';
-  import StudentsStats from './students-stats.svelte';
-  import StudentCard from './student-card.svelte';
+  import EmptyStudents from './empty.svelte';
+  import StudentsStats from './stats.svelte';
+  import StudentCard from './card.svelte';
 
   interface Props {
     assignHomework: Snippet<[StudentInfo, ExerciseInfo[]]>;

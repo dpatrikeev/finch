@@ -1,7 +1,7 @@
-import { getRequestEvent, query } from '$app/server';
+import { command, getRequestEvent, query } from '$app/server';
 import type { ExerciseInfo } from '$lib/types/students.types';
 import { supabase } from '$lib/server/database';
-import { string } from 'valibot';
+import { boolean, object, string } from 'valibot';
 import type {
   AnswerHistory,
   ExerciseStatus,
@@ -65,7 +65,7 @@ export const getExerciseStatus = query(
 /**
  * Загружает упражнение по ID
  */
-export const loadExercise = query(
+export const getExercise = query(
   string(),
   async (exerciseId: string): Promise<QuizExercise> => {
     const { request } = getRequestEvent();
@@ -85,7 +85,7 @@ export const loadExercise = query(
 /**
  * Загружает историю ответов пользователя для упражнения
  */
-export const loadAnswersHistory = query(
+export const getAnswersHistory = query(
   string(),
   async (exerciseId: string): Promise<AnswerHistory[]> => {
     const { locals } = getRequestEvent();
@@ -111,5 +111,48 @@ export const loadAnswersHistory = query(
     }
 
     return data || [];
+  }
+);
+
+/**
+ * Сохраняет ответ пользователя на упражнение
+ */
+export const saveAnswer = command(
+  object({
+    exerciseId: string(),
+    selectedAnswerId: string(),
+    isCorrect: boolean(),
+  }),
+  async ({ exerciseId, selectedAnswerId, isCorrect }) => {
+    const { locals } = getRequestEvent();
+    const auth = locals.auth();
+    const userId = auth.userId as string;
+
+    if (!userId) {
+      throw error(401, 'Необходима авторизация');
+    }
+
+    const { data, error: insertError } = await supabase(locals)
+      .from('answers_history')
+      .insert({
+        user_id: userId,
+        exercise_id: exerciseId,
+        selected_answer_id: selectedAnswerId,
+        is_correct: isCorrect,
+        answered_at: new Date().toISOString(),
+      })
+      .select()
+      .single();
+
+    if (insertError) {
+      console.error('Error saving answer:', insertError);
+      throw error(500, 'Ошибка при сохранении ответа');
+    }
+
+    // Обновляем связанные queries
+    await getAnswersHistory(exerciseId).refresh();
+    await getExerciseStatus(exerciseId).refresh();
+
+    return { success: true, answer: data };
   }
 );

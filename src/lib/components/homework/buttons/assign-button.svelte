@@ -2,10 +2,10 @@
   import { Button } from '$lib/components/ui/button';
   import { Plus } from 'lucide-svelte';
   import type { StudentInfo } from '$lib/types/students.types';
-  import AssignHomeworkModal from '../modals/assign-homework-modal.svelte';
+  import AssignHomeworkModal from '../modals/assign-modal.svelte';
 
   interface Props {
-    student: StudentInfo | null;
+    student: StudentInfo;
     exercises: Array<{ id: string; title: string; description?: string }>;
     variant?:
       | 'default'
