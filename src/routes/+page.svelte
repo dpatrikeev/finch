@@ -2,6 +2,12 @@
   import { Button } from '$lib/components/ui/button';
   import { SignedIn, SignedOut, SignInButton } from 'svelte-clerk';
   import { BookOpen } from 'lucide-svelte';
+  import { Spinner } from '$lib/components';
+  import ExerciseItem from '$lib/components/exercises/exercises-item.svelte';
+  import {
+    getExercises,
+    getExerciseStatus,
+  } from '$lib/remote/exercises.remote';
 </script>
 
 <SignedOut>
@@ -37,6 +43,19 @@
       <h1 class="text-2xl md:text-3xl font-medium text-foreground">
         Список упражнений
       </h1>
+    </div>
+
+    <div class="space-y-4">
+      {#await getExercises()}
+        <Spinner />
+      {:then exercises}
+        {#each exercises as exercise}
+          <ExerciseItem
+            {exercise}
+            status={await getExerciseStatus(exercise.id)}
+          />
+        {/each}
+      {/await}
     </div>
   </section>
 </SignedIn>
