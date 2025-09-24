@@ -54,31 +54,26 @@ export const assignHomework = command(
       throw error(400, validation.error);
     }
 
-    try {
-      const { data, error: insertError } = await supabase(locals)
-        .from('homework')
-        .insert({
-          teacher_id: auth.userId,
-          student_id: studentId,
-          exercises,
-        })
-        .select()
-        .single();
+    const { data, error: insertError } = await supabase(locals)
+      .from('homework')
+      .insert({
+        teacher_id: auth.userId,
+        student_id: studentId,
+        exercises,
+      })
+      .select()
+      .single();
 
-      if (insertError) {
-        console.error('Error assigning homework:', insertError);
-        throw error(500, 'Ошибка при назначении домашнего задания');
-      }
-
-      // Обновляем связанные queries
-      await getStudentHomework(studentId).refresh();
-      await getMyHomework().refresh();
-
-      return { success: true, homework: data };
-    } catch (err) {
-      console.error('Error in assignHomework:', err);
-      throw error(500, 'Внутренняя ошибка сервера');
+    if (insertError) {
+      console.error('Error assigning homework:', insertError);
+      throw error(500, 'Ошибка при назначении домашнего задания');
     }
+
+    // Обновляем связанные queries
+    await getStudentHomework(studentId).refresh();
+    await getMyHomework().refresh();
+
+    return { success: true, homework: data };
   }
 );
 
@@ -90,44 +85,37 @@ export const getStudentHomework = query(
   async (studentId: string): Promise<HomeworkWithProgress[]> => {
     const { locals } = getRequestEvent();
 
-    try {
-      const { data: homework, error: homeworkError } = await supabase(locals)
-        .from('homework')
-        .select('*')
-        .eq('student_id', studentId)
-        .order('created_at', { ascending: false });
+    const { data: homework, error: homeworkError } = await supabase(locals)
+      .from('homework')
+      .select('*')
+      .eq('student_id', studentId)
+      .order('created_at', { ascending: false });
 
-      if (homeworkError) {
-        console.error('Error fetching homework:', homeworkError);
-        return [];
-      }
-
-      if (!homework || homework.length === 0) {
-        return [];
-      }
-
-      // Получаем записи ответов для всех упражнений
-      const exerciseIds = homework.flatMap((hw) => hw.exercises);
-      const { data: answerRecords, error: answersError } = await supabase(
-        locals
-      )
-        .from('answers_history')
-        .select('*')
-        .in('exercise_id', exerciseIds)
-        .eq('user_id', studentId);
-
-      if (answersError) {
-        console.error('Error fetching answer records:', answersError);
-      }
-
-      // Создаем расширенные объекты с прогрессом
-      return homework.map((hw) =>
-        createHomeworkWithProgress(hw, answerRecords || [])
-      );
-    } catch (error) {
-      console.error('Error in getStudentHomework:', error);
+    if (homeworkError) {
+      console.error('Error fetching homework:', homeworkError);
       return [];
     }
+
+    if (!homework || homework.length === 0) {
+      return [];
+    }
+
+    // Получаем записи ответов для всех упражнений
+    const exerciseIds = homework.flatMap((hw) => hw.exercises);
+    const { data: answerRecords, error: answersError } = await supabase(locals)
+      .from('answers_history')
+      .select('*')
+      .in('exercise_id', exerciseIds)
+      .eq('user_id', studentId);
+
+    if (answersError) {
+      console.error('Error fetching answer records:', answersError);
+    }
+
+    // Создаем расширенные объекты с прогрессом
+    return homework.map((hw) =>
+      createHomeworkWithProgress(hw, answerRecords || [])
+    );
   }
 );
 

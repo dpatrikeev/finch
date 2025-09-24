@@ -10,15 +10,14 @@
 
   interface Props {
     assignHomework: Snippet<[StudentInfo, ExerciseInfo[]]>;
-    exercisesAmount: number;
   }
 
-  const { assignHomework, exercisesAmount }: Props = $props();
+  const { assignHomework }: Props = $props();
 
   const [students, exercises] = $derived(
     await Promise.all([getTeacherStudents(), getExercises()])
   );
-  const stats = $derived(calculateStudentsStats(students, exercisesAmount));
+  const stats = $derived(calculateStudentsStats(students, exercises.length));
 </script>
 
 {#if students.length === 0}

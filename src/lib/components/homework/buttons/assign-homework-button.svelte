@@ -1,15 +1,8 @@
 <script lang="ts">
   import { Button } from '$lib/components/ui/button';
   import { Plus } from 'lucide-svelte';
+  import type { StudentInfo } from '$lib/types/students.types';
   import AssignHomeworkModal from '../modals/assign-homework-modal.svelte';
-
-  interface StudentInfo {
-    id: string;
-    firstName: string | null;
-    lastName: string | null;
-    email: string;
-    imageUrl: string | null;
-  }
 
   interface Props {
     student: StudentInfo | null;

@@ -33,7 +33,7 @@ export const getAccuracyTextClass = (accuracy: number) =>
  */
 export function calculateStudentsStats(
   students: StudentInfo[],
-  totalExercises: number
+  totalExercises: number = 0
 ): StudentsStatsData {
   return {
     totalStudents: students.length,

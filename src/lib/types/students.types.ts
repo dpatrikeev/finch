@@ -1,9 +1,12 @@
-export interface StudentInfo {
+export interface BaseUser {
   id: string;
   firstName: string | null;
   lastName: string | null;
   email: string;
-  imageUrl: string | null;
+  imageUrl?: string | null;
+}
+
+export interface StudentInfo extends BaseUser {
   totalExercises: number;
   correctAnswers: number;
   accuracy: number;

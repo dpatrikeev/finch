@@ -89,7 +89,7 @@
     </div>
   </Card.Content>
 
-  <Card.Footer class="flex flex-col gap-2">
+  <Card.Footer class="flex gap-2 justify-center flex-col md:flex-row w-full">
     {#if children}
       {@render children()}
     {/if}
@@ -97,7 +97,7 @@
       variant="ghost"
       size="sm"
       href="/students/{student.id}"
-      class="w-full"
+      class="w-full flex-1 min-h-10"
     >
       <User class="w-4 h-4 mr-2" />
       Открыть профиль

@@ -25,7 +25,7 @@
   </div>
 
   <svelte:boundary>
-    <Students {assignHomework} exercisesAmount={0} />
+    <Students {assignHomework} />
 
     {#snippet pending()}
       <Spinner />
@@ -34,5 +34,5 @@
 </section>
 
 {#snippet assignHomework(student: StudentInfo, exercises: ExerciseInfo[])}
-  <AssignHomeworkButton {student} {exercises} />
+  <AssignHomeworkButton {student} {exercises} class="w-full flex-1 min-h-10" />
 {/snippet}

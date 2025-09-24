@@ -5,16 +5,12 @@
   import { Badge } from '$lib/components/ui/badge';
   import { toast } from 'svelte-sonner';
   import { assignHomework } from '$lib/remote/homework.remote';
+  import type { BaseUser, ExerciseInfo } from '$lib/types/students.types';
 
   interface Props {
     open?: boolean;
-    student: {
-      id: string;
-      firstName: string | null;
-      lastName: string | null;
-      email: string;
-    } | null;
-    exercises: Array<{ id: string; title: string; description?: string }>;
+    student: BaseUser;
+    exercises: ExerciseInfo[];
     onclose?: () => void;
     onassigned?: () => void;
   }
