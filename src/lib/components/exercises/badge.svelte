@@ -5,18 +5,22 @@
   import type { ExerciseStatus } from '$lib/types/exercises.types';
   import { cn } from '$lib/utils/cn';
 
-  interface Props {
-    status: ExerciseStatus;
+  interface Props extends ExerciseStatus {
     class?: string;
   }
 
-  const { status, class: className }: Props = $props();
+  let { isCompleted, isCorrect, class: className }: Props = $props();
 
-  const isCompleted = status?.completed ?? false;
-  const statusText = isCompleted ? 'Решено' : 'Не решено';
-  const tooltipText = isCompleted
-    ? 'Упражнение выполнено правильно'
-    : 'Упражнение не выполнено';
+  let statusText = $derived(isCompleted ? 'Решено' : 'Не решено');
+  let tooltipText = $state();
+
+  if (isCompleted && isCorrect) {
+    tooltipText = 'Упражнение выполнено правильно';
+  } else if (isCompleted && !isCorrect) {
+    tooltipText = 'Упражнение выполнено неправильно';
+  } else {
+    tooltipText = 'Упражнение не выполнено';
+  }
 
   const statusStyles = isCompleted
     ? 'bg-green-100 text-green-700 border-green-200 hover:bg-green-200'

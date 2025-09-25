@@ -1,21 +1,12 @@
 <script lang="ts">
   import '../app.css';
 
-  import type { Snippet } from 'svelte';
   import { ClerkProvider } from 'svelte-clerk';
   import { Toaster } from '$lib/components/ui/sonner';
   import { ruRU } from '@clerk/localizations';
   import Header from '$lib/components/header/header.svelte';
 
-  interface Props {
-    children: Snippet;
-    data: {
-      userRole: UserPublicMetadata['role'];
-      userId: string;
-    };
-  }
-
-  const { children, data }: Props = $props();
+  const { children, data } = $props();
   const { userRole, userId } = $derived(data);
 </script>
 

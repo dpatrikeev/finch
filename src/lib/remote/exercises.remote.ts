@@ -1,4 +1,4 @@
-import { command, getRequestEvent, query } from '$app/server';
+import { command, getRequestEvent, prerender, query } from '$app/server';
 import type { ExerciseInfo } from '$lib/types/students.types';
 import { supabase } from '$lib/server/database';
 import { boolean, object, string } from 'valibot';
@@ -50,14 +50,14 @@ export const getExerciseStatus = query(
 
     if (!lastAnswer) {
       return {
-        completed: false,
-        is_correct: false,
+        isCompleted: false,
+        isCorrect: false,
       };
     }
 
     return {
-      completed: true,
-      is_correct: lastAnswer.is_correct,
+      isCompleted: true,
+      isCorrect: lastAnswer.is_correct,
     };
   }
 );
@@ -65,7 +65,7 @@ export const getExerciseStatus = query(
 /**
  * Загружает упражнение по ID
  */
-export const getExercise = query(
+export const getExercise = prerender(
   string(),
   async (exerciseId: string): Promise<QuizExercise> => {
     const { request } = getRequestEvent();

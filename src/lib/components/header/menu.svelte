@@ -6,12 +6,12 @@
   import Nav from './nav.svelte';
 
   interface Props {
-    navigationItems: NavigationItem[];
     userId: string;
+    userRole: UserPublicMetadata['role'];
+    navigationItems: NavigationItem[];
   }
 
-  const { navigationItems, userId }: Props = $props();
-
+  let { navigationItems, userId, userRole }: Props = $props();
   let isMobileOpen = $state(false);
 
   function handleClose() {
@@ -20,7 +20,7 @@
 </script>
 
 <div class="hidden md:flex justify-center gap-4">
-  <Nav {navigationItems} {userId} />
+  <Nav {navigationItems} {userId} {userRole} />
 </div>
 
 <Sheet.Root bind:open={isMobileOpen}>
@@ -42,8 +42,9 @@
       <Nav
         {navigationItems}
         {userId}
+        {userRole}
         {handleClose}
-        buttonStyle="w-full justify-start mb-2 bg-secondary/40"
+        class="w-full justify-start mb-2 bg-secondary/40"
       />
     </div>
   </Sheet.Content>

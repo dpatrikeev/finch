@@ -5,17 +5,15 @@
   import * as Card from '$lib/components/ui/card';
   import type { ExerciseInfo } from '$lib/types/students.types';
   import ExerciseBadge from './badge.svelte';
-  import { getExerciseStatus } from '$lib/remote/exercises.remote';
+  import type { ExerciseStatus } from '$lib/types/exercises.types';
 
   interface Props {
-    exercise: ExerciseInfo;
+    exercise: ExerciseInfo & ExerciseStatus;
   }
 
-  const { exercise }: Props = $props();
-
-  const status = await getExerciseStatus(exercise.id);
-  const isCompleted = status?.completed ?? false;
-  const buttonText = isCompleted ? 'Повторить' : 'Начать';
+  let { exercise }: Props = $props();
+  let { isCompleted, isCorrect } = $derived(exercise);
+  let buttonText = $derived(isCompleted ? 'Повторить' : 'Начать');
 </script>
 
 <Card.Root class="flex justify-between md:flex-row md:items-center">
@@ -26,7 +24,7 @@
         {exercise.id}
       </Badge>
 
-      <ExerciseBadge {status} />
+      <ExerciseBadge {isCompleted} {isCorrect} />
     </Card.Header>
     <Card.Title class="text-lg md:text-xl font-medium text-foreground">
       {exercise.title}

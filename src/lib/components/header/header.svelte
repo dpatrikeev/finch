@@ -5,27 +5,27 @@
   import Menu from './menu.svelte';
 
   interface Props {
-    userRole: UserPublicMetadata['role'];
     userId: string;
+    userRole: UserPublicMetadata['role'];
   }
 
-  const { userRole, userId }: Props = $props();
-  const navigationItems = $derived(getNavigationItems(userRole));
+  let { userRole, userId }: Props = $props();
+  let navigationItems = $derived(getNavigationItems(userRole));
 </script>
 
-<div class="w-full h-12">
-  <header
+<header class="w-full h-12">
+  <div
     class="flex items-center justify-between fixed h-12 top-0 left-0 flex-0 w-full backdrop-blur-[9px] px-4 md:px-10 z-40 border-b border-border/10"
   >
     <Logo />
 
     <SignedIn>
       <div class="flex items-center gap-2">
-        <Menu {navigationItems} {userId} />
+        <Menu {navigationItems} {userId} {userRole} />
         <div class="shrink-0 min-w-8 min-h-8 flex items-center justify-center">
           <UserButton />
         </div>
       </div>
     </SignedIn>
-  </header>
-</div>
+  </div>
+</header>

@@ -1,10 +1,8 @@
 import type { ExerciseMeasure } from './notation.types';
 
 export interface ExerciseStatus {
-  completed: boolean;
-  is_correct: boolean;
-  attempts?: number;
-  last_attempt_at?: string;
+  isCompleted: boolean;
+  isCorrect: boolean;
 }
 
 export type ExerciseOption = {

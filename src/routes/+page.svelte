@@ -2,9 +2,10 @@
   import { Button } from '$lib/components/ui/button';
   import { SignedIn, SignedOut, SignInButton } from 'svelte-clerk';
   import { BookOpen } from 'lucide-svelte';
-  import { Spinner } from '$lib/components';
-  import ExerciseItem from '$lib/components/exercises/exercises-item.svelte';
-  import { getExercises } from '$lib/remote/exercises.remote';
+  import ListItem from '$lib/components/exercises/list-item.svelte';
+
+  const { data } = $props();
+  const { exercises } = $derived(data);
 </script>
 
 <SignedOut>
@@ -43,13 +44,9 @@
     </div>
 
     <div class="space-y-4">
-      {#await getExercises()}
-        <Spinner />
-      {:then exercises}
-        {#each exercises as exercise}
-          <ExerciseItem {exercise} />
-        {/each}
-      {/await}
+      {#each exercises as exercise}
+        <ListItem {exercise} />
+      {/each}
     </div>
   </section>
 </SignedIn>
