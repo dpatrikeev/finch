@@ -4,7 +4,7 @@ import { string } from 'valibot';
 import { error } from '@sveltejs/kit';
 
 import type {
-  AnswerHistory,
+  ExerciseAnswersHistory,
   ExerciseStatus,
   QuizExercise,
 } from '$lib/features/exercises/types';
@@ -88,7 +88,7 @@ export const getExercise = prerender(
  */
 export const getAnswersHistory = query(
   string(),
-  async (exerciseId: string): Promise<AnswerHistory[]> => {
+  async (exerciseId: string): Promise<ExerciseAnswersHistory[]> => {
     const { locals } = getRequestEvent();
     const auth = locals.auth();
     const userId = auth.userId as string;

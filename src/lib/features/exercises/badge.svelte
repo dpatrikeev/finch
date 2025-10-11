@@ -1,44 +1,52 @@
 <script lang="ts">
-  import { CircleCheck, CircleX } from 'lucide-svelte';
+  import { CircleCheck, CircleX, type Icon as IconType } from 'lucide-svelte';
   import { Badge } from '$lib/components/ui/badge';
   import * as Tooltip from '$lib/components/ui/tooltip';
-  import type { ExerciseStatus } from '$lib/features/exercises/types';
+
+  import type { ExerciseStatus } from './types';
   import { cn } from '$lib/utils/cn';
 
-  interface Props extends ExerciseStatus {
-    class?: string;
-  }
-
-  let { isCompleted, isCorrect, class: className }: Props = $props();
-
-  let statusText = $derived(isCompleted ? 'Решено' : 'Не решено');
-  let tooltipText = $state();
-
-  if (isCompleted && isCorrect) {
-    tooltipText = 'Упражнение выполнено правильно';
-  } else if (isCompleted && !isCorrect) {
-    tooltipText = 'Упражнение выполнено неправильно';
-  } else {
-    tooltipText = 'Упражнение не выполнено';
-  }
-
-  const statusStyles = isCompleted
-    ? 'bg-green-100 text-green-700 border-green-200 hover:bg-green-200'
-    : 'bg-gray-100 text-gray-600 border-gray-200';
+  let { isCompleted, isCorrect }: ExerciseStatus = $props();
 </script>
 
 <Tooltip.Provider>
   <Tooltip.Root>
-    <Tooltip.Trigger>
-      <Badge class={cn(statusStyles, 'text-xs', className)}>
-        {#if isCompleted}
-          <CircleCheck class="w-3 h-3 mr-1" />
-        {:else}
-          <CircleX class="w-3 h-3 mr-1 opacity-50" />
-        {/if}
-        {statusText}
-      </Badge>
-    </Tooltip.Trigger>
-    <Tooltip.Content>{tooltipText}</Tooltip.Content>
+    {#if isCompleted && isCorrect}
+      {@render badge(
+        'Решено',
+        'Упражнение выполнено правильно',
+        'bg-green-100',
+        CircleCheck
+      )}
+    {:else if isCompleted && !isCorrect}
+      {@render badge(
+        'C ошибкой',
+        'Упражнение выполнено неправильно',
+        'bg-red-100',
+        CircleX
+      )}
+    {:else}
+      {@render badge(
+        'Не решено',
+        'Упражнение не выполнено',
+        'bg-gray-100',
+        CircleCheck
+      )}
+    {/if}
   </Tooltip.Root>
 </Tooltip.Provider>
+
+{#snippet badge(
+  title: string,
+  tooltip: string,
+  bg: string,
+  Icon: typeof IconType
+)}
+  <Tooltip.Trigger>
+    <Badge variant="secondary" class={bg}>
+      <Icon class={cn('w-3 h-3 mr-1')} />
+      {title}
+    </Badge>
+  </Tooltip.Trigger>
+  <Tooltip.Content>{tooltip}</Tooltip.Content>
+{/snippet}
