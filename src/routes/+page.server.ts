@@ -1,4 +1,7 @@
-import { getExercises, getExerciseStatus } from '$lib/remote/exercises.remote';
+import {
+  getExercises,
+  getExerciseStatus,
+} from '$lib/features/exercises/queries.remote';
 import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async () => {

@@ -2,12 +2,11 @@
   import '../app.css';
 
   import { ClerkProvider } from 'svelte-clerk';
-  import { Toaster } from '$lib/components/ui/sonner';
   import { ruRU } from '@clerk/localizations';
-  import Header from '$lib/components/header/header.svelte';
+  import { Toaster } from '$lib/components/ui/sonner';
+  import Header from '$lib/features/header/header.svelte';
 
-  const { children, data } = $props();
-  const { userRole, userId } = $derived(data);
+  let { children } = $props();
 </script>
 
 <svelte:head>
@@ -22,7 +21,7 @@
 
 <ClerkProvider localization={ruRU}>
   <main class="min-h-screen relative overflow-hidden">
-    <Header {userRole} {userId} />
+    <Header />
     {@render children()}
   </main>
   <Toaster />

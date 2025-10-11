@@ -1,9 +1,18 @@
 <script lang="ts">
-  import Students from '$lib/components/students/students.svelte';
-  import type { StudentInfo, ExerciseInfo } from '$lib/types/students.types';
-  import { Spinner } from '$lib/components';
+  import type {
+    StudentInfo,
+    ExerciseInfo,
+  } from '$lib/features/students/types.js';
   import { GraduationCap } from 'lucide-svelte';
-  import { AssignHomeworkButton } from '$lib/components/homework';
+  import AssignHomeworkButton from '$lib/features/homework/assign-button.svelte';
+  import { calculateStudentsStats } from '$lib/features/students/utils.js';
+  import StudentsStats from '$lib/features/students/stats.svelte';
+  import StudentCard from '$lib/features/students/card.svelte';
+  import EmptyStudents from './empty.svelte';
+
+  let { data } = $props();
+  let { exercises, students } = $derived(data);
+  let stats = $derived(calculateStudentsStats(students, exercises.length));
 </script>
 
 <svelte:head>
@@ -24,13 +33,19 @@
     </p>
   </div>
 
-  <svelte:boundary>
-    <Students {assignHomework} />
+  {#if students.length === 0}
+    <EmptyStudents />
+  {:else}
+    <StudentsStats {stats} />
 
-    {#snippet pending()}
-      <Spinner />
-    {/snippet}
-  </svelte:boundary>
+    <div class="grid gap-6 grid-cols-1 md:grid-cols-2 xl:grid-cols-3">
+      {#each students as student}
+        <StudentCard {student}>
+          {@render assignHomework(student, exercises)}
+        </StudentCard>
+      {/each}
+    </div>
+  {/if}
 </section>
 
 {#snippet assignHomework(student: StudentInfo, exercises: ExerciseInfo[])}

@@ -9,6 +9,9 @@ const config = {
     experimental: {
       remoteFunctions: true,
     },
+    alias: {
+      'app.css': 'src/app.css',
+    },
   },
   compilerOptions: {
     experimental: {
