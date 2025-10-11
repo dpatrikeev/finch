@@ -1,8 +1,14 @@
-import type { ExerciseMeasure } from './notation.types';
+import type { ExerciseMeasure } from '$lib/features/notation/types';
 
 export interface ExerciseStatus {
   isCompleted: boolean;
   isCorrect: boolean;
+}
+
+export interface ExerciseInfo {
+  id: string;
+  title: string;
+  description?: string;
 }
 
 export type ExerciseOption = {

@@ -3,9 +3,9 @@
   import { Button } from '$lib/components/ui/button';
   import { Badge } from '$lib/components/ui/badge';
   import * as Card from '$lib/components/ui/card';
-  import type { ExerciseInfo } from '$lib/features/students/types';
-  import type { ExerciseStatus } from '$lib/features/exercises/types';
   import ExerciseBadge from './badge.svelte';
+
+  import type { ExerciseStatus, ExerciseInfo } from './types';
 
   interface Props {
     exercise: ExerciseInfo & ExerciseStatus;

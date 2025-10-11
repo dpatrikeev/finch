@@ -6,7 +6,7 @@
   import { Badge } from '$lib/components/ui/badge';
   import { toast } from 'svelte-sonner';
   import { assignHomework } from './commands.remote';
-  import User from '$lib/features/user/user.svelte';
+  import { Student } from '$lib/components';
 
   import type { BaseUser, ExerciseInfo } from '$lib/features/students/types';
 
@@ -81,7 +81,7 @@
       <Dialog.Description>Выберите упражнения для студента</Dialog.Description>
     </Dialog.Header>
     <div class="flex items-center gap-3 p-3 md:p-4 bg-blue-50 rounded-lg mb-4">
-      <User {student} />
+      <Student {student} />
     </div>
     <div class="flex items-center gap-2">
       <BookOpen class="w-5 h-5 text-gray-600" />

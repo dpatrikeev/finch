@@ -12,12 +12,6 @@ export interface StudentInfo extends BaseUser {
   accuracy: number;
 }
 
-export interface ExerciseInfo {
-  id: string;
-  title: string;
-  description?: string;
-}
-
 export interface StudentsStatsData {
   totalStudents: number;
   totalExercises: number;

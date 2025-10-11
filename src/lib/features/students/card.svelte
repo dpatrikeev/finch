@@ -3,7 +3,7 @@
   import { Button } from '$lib/components/ui/button';
   import * as Card from '$lib/components/ui/card';
   import { Badge } from '$lib/components/ui/badge';
-  import User from '$lib/features/user/user.svelte';
+  import { Student } from '$lib/components';
   import { getAccuracyColorClass, getAccuracyTextClass } from './utils';
 
   import type { StudentInfo } from './types';
@@ -19,7 +19,7 @@
 
 <Card.Root class="hover:shadow-md transition-shadow">
   <Card.Header>
-    <User {student} />
+    <Student {student} />
   </Card.Header>
 
   <Card.Content class="space-y-4">
