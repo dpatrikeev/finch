@@ -4,7 +4,6 @@
   import * as Tooltip from '$lib/components/ui/tooltip';
 
   import type { ExerciseStatus } from './types';
-  import { cn } from '$lib/utils/cn';
 
   let { isCompleted, isCorrect }: ExerciseStatus = $props();
 </script>
@@ -44,7 +43,7 @@
 )}
   <Tooltip.Trigger>
     <Badge variant="secondary" class={bg}>
-      <Icon class={cn('w-3 h-3 mr-1')} />
+      <Icon class="w-3 h-3 mr-1" />
       {title}
     </Badge>
   </Tooltip.Trigger>

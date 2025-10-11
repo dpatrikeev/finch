@@ -4,12 +4,12 @@
   import { CircleCheck, CircleX, History } from 'lucide-svelte';
   import { formatAnswerDate } from '$lib/features/quiz/utils';
   import type {
-    AnswerHistory,
+    ExerciseAnswersHistory,
     ExerciseOption,
   } from '$lib/features/exercises/types';
 
   interface Props {
-    answersHistory: AnswerHistory[];
+    answersHistory: ExerciseAnswersHistory[];
     options: ExerciseOption[];
   }
 

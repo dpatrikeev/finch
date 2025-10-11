@@ -5,18 +5,18 @@
   import { toast } from 'svelte-sonner';
   import { Clock, Eye } from 'lucide-svelte';
   import type {
-    AnswerHistory,
+    ExerciseAnswersHistory,
     QuizExercise,
   } from '$lib/features/exercises/types';
   import { isCorrectAnswer } from '$lib/features/quiz/utils';
-  import { saveAnswer } from '../exercises/commands.remote';
+  import { saveAnswer } from '../exercises/mutations.remote';
   import QuizOption from './option.svelte';
   import QuizHistory from './history.svelte';
   import QuizExplanation from './explanation.svelte';
 
   interface Props {
     exercise: QuizExercise;
-    answersHistory: AnswerHistory[];
+    answersHistory: ExerciseAnswersHistory[];
   }
 
   let { exercise, answersHistory }: Props = $props();

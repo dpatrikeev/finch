@@ -1,5 +1,4 @@
 import { BookOpenCheck, Users } from 'lucide-svelte';
-import type { Component } from 'svelte';
 import type { NavigationItem } from './types';
 
 export function getNavigationItems(
@@ -11,7 +10,7 @@ export function getNavigationItems(
     items.push({
       href: '/students',
       label: 'Мои студенты',
-      icon: Users as unknown as Component,
+      icon: Users,
     });
   }
 
@@ -19,7 +18,7 @@ export function getNavigationItems(
     items.push({
       href: '/homework',
       label: 'Моя домашка',
-      icon: BookOpenCheck as unknown as Component,
+      icon: BookOpenCheck,
     });
   }
 

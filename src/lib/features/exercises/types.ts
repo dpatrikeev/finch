@@ -11,15 +11,6 @@ export interface ExerciseInfo {
   description?: string;
 }
 
-export type ExerciseAnswersHistory = {
-  id: number;
-  user_id: string;
-  exercise_id: string;
-  selected_answer_id: string;
-  is_correct: boolean;
-  answered_at: string;
-};
-
 export type ExerciseOption = {
   id: string;
   measures: ExerciseMeasure[];
