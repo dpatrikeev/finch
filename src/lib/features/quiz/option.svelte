@@ -4,7 +4,8 @@
   import * as Tooltip from '$lib/components/ui/tooltip';
   import { CircleCheck, CircleX, History } from 'lucide-svelte';
   import type { ExerciseOption } from '$lib/features/exercises';
-  import { formatAnswerDate } from '$lib/features/quiz/utils';
+  import { Notation } from '$lib/features/notation';
+  import { formatAnswerDate } from './utils';
 
   interface Props {
     option: ExerciseOption;
@@ -80,7 +81,7 @@
   </Card.Header>
   <Card.Content class="flex justify-center pt-2">
     <div class="notation-container">
-      <!-- <Notation measures={option.measures} /> -->
+      <Notation measures={option.measures} />
     </div>
   </Card.Content>
 </Card.Root>

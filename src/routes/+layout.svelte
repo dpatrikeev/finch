@@ -1,14 +1,25 @@
 <script lang="ts">
   import '../app.css';
 
-  import type { LayoutProps } from './$types';
+  import type { Snippet } from 'svelte';
   import { ClerkProvider } from 'svelte-clerk';
   import { ruRU } from '@clerk/localizations';
   import { Toaster } from '$lib/components/ui/sonner';
   import { Header } from '$lib/features/header';
   import { HomeworkBadge } from '$lib/features/homework';
 
-  let { children }: LayoutProps = $props();
+  interface LayoutData {
+    clerk: any;
+    role: string;
+    newHomeworkCount: number;
+  }
+
+  interface Props {
+    children: Snippet;
+    data: LayoutData;
+  }
+
+  let { children, data }: Props = $props();
 </script>
 
 <svelte:head>
@@ -30,5 +41,7 @@
 </ClerkProvider>
 
 {#snippet homeworkBadge()}
-  <HomeworkBadge />
+  {#if data.role === 'student'}
+    <HomeworkBadge count={data.newHomeworkCount} />
+  {/if}
 {/snippet}

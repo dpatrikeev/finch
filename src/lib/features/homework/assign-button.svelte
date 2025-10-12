@@ -1,7 +1,7 @@
 <script lang="ts">
   import { Button } from '$lib/components/ui/button';
   import { Plus } from 'lucide-svelte';
-  import type { StudentInfo } from '$lib/features/students/types';
+  import type { StudentInfo } from '$lib/features/students';
   import AssignHomeworkModal from './assign-modal.svelte';
 
   interface Props {

@@ -1,5 +1,5 @@
 import { getExercises } from '$lib/features/exercises';
-import { getTeacherStudents } from '$lib/features/students/queries.remote';
+import { getTeacherStudents } from '$lib/features/students';
 import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async () => {

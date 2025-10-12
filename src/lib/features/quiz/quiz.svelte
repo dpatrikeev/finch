@@ -4,11 +4,9 @@
   import { Separator } from '$lib/components/ui/separator';
   import { toast } from 'svelte-sonner';
   import { Clock, Eye } from 'lucide-svelte';
-  import type {
-    ExerciseAnswersHistory,
-    QuizExercise,
-  } from '$lib/features/exercises';
-  import { isCorrectAnswer } from '$lib/features/quiz/utils';
+  import type { QuizExercise, AnswerHistory } from './types';
+  import { Notation } from '$lib/features/notation';
+  import { isCorrectAnswer } from './utils';
   import { saveAnswer } from '$lib/features/exercises';
   import QuizOption from './option.svelte';
   import QuizHistory from './history.svelte';
@@ -16,7 +14,7 @@
 
   interface Props {
     exercise: QuizExercise;
-    answersHistory: ExerciseAnswersHistory[];
+    answersHistory: AnswerHistory[];
   }
 
   let { exercise, answersHistory }: Props = $props();
@@ -126,7 +124,7 @@
     </Card.Header>
     <Card.Content class="flex justify-center p-4 md:p-6">
       <div class="notation-container">
-        <!-- <Notation measures={exercise.question} /> -->
+        <Notation measures={exercise.question} />
       </div>
     </Card.Content>
   </Card.Root>

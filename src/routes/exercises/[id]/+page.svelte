@@ -1,6 +1,6 @@
 <script lang="ts">
   import { Title } from '$lib/components';
-  import Quiz from '$lib/features/quiz/quiz.svelte';
+  import { Quiz } from '$lib/features/quiz';
 
   let { data } = $props();
   let { exercise, answersHistory } = $derived(data);

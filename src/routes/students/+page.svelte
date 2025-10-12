@@ -1,11 +1,9 @@
 <script lang="ts">
-  import type {
-    StudentInfo,
-    ExerciseInfo,
-  } from '$lib/features/students/types.js';
+  import type { StudentInfo } from '$lib/features/students';
+  import type { ExerciseInfo } from '$lib/features/exercises';
   import { GraduationCap } from 'lucide-svelte';
-  import AssignHomeworkButton from '$lib/features/homework/assign-button.svelte';
-  import { calculateStudentsStats } from '$lib/features/students/utils.js';
+  import { AssignHomeworkButton } from '$lib/features/homework';
+  import { calculateStudentsStats } from '$lib/features/students/utils';
   import StudentsStats from '$lib/features/students/stats.svelte';
   import StudentCard from '$lib/features/students/card.svelte';
   import EmptyStudents from './empty.svelte';

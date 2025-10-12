@@ -1,4 +1,3 @@
-import type { HomeworkWithProgress } from '$lib/types/homework.types';
 import type {
   StudentInfo,
   StudentsStatsData,
@@ -50,94 +49,6 @@ export function calculateStudentsStats(
   };
 }
 
-/**
- * Получает статус упражнения в домашнем задании
- */
-export function getExerciseStatus(
-  exerciseId: string,
-  homework: HomeworkWithProgress
-) {
-  const status = homework.exercises_status[exerciseId];
-
-  if (!status) {
-    return {
-      icon: 'Clock',
-      color: 'text-gray-400',
-      text: 'Не начато',
-    };
-  }
-
-  if (status.completed) {
-    return {
-      icon: 'CircleCheck',
-      color: 'text-green-600',
-      text: 'Выполнено',
-    };
-  } else if (status.attempts > 0) {
-    return {
-      icon: 'CircleAlert',
-      color: 'text-orange-500',
-      text: `Попыток: ${status.attempts}`,
-    };
-  }
-
-  return {
-    icon: 'Clock',
-    color: 'text-gray-400',
-    text: 'Не начато',
-  };
-}
-
-/**
- * Вычисляет общую статистику по всем домашним заданиям студента
- */
-export function calculateOverallHomeworkStats(
-  homework: HomeworkWithProgress[]
-) {
-  const totalHomework = homework.length;
-  const completedHomework = homework.filter((hw) => hw.is_completed).length;
-  const totalExercises = homework.reduce(
-    (sum, hw) => sum + hw.exercises.length,
-    0
-  );
-  const completedExercises = homework.reduce((sum, hw) => {
-    return (
-      sum +
-      Object.values(hw.exercises_status).filter(
-        (status: any) => status?.completed
-      ).length
-    );
-  }, 0);
-  const totalAttempts = homework.reduce(
-    (sum, hw) => sum + (hw.total_attempts || 0),
-    0
-  );
-  const correctAttempts = homework.reduce(
-    (sum, hw) => sum + (hw.correct_attempts || 0),
-    0
-  );
-
-  return {
-    totalHomework,
-    completedHomework,
-    totalExercises,
-    completedExercises,
-    totalAttempts,
-    correctAttempts,
-    completionRate:
-      totalHomework > 0
-        ? Math.round((completedHomework / totalHomework) * 100)
-        : 0,
-    exerciseCompletionRate:
-      totalExercises > 0
-        ? Math.round((completedExercises / totalExercises) * 100)
-        : 0,
-    accuracy:
-      totalAttempts > 0
-        ? Math.round((correctAttempts / totalAttempts) * 100)
-        : 0,
-  };
-}
 /**
  * Фильтрует студентов по поисковому запросу
  */

@@ -2,14 +2,12 @@
   import { Badge } from '$lib/components/ui/badge';
   import * as Card from '$lib/components/ui/card';
   import { CircleCheck, CircleX, History } from 'lucide-svelte';
-  import { formatAnswerDate } from '$lib/features/quiz/utils';
-  import type {
-    ExerciseAnswersHistory,
-    ExerciseOption,
-  } from '$lib/features/exercises';
+  import { formatAnswerDate } from './utils';
+  import type { AnswerHistory } from './types';
+  import type { ExerciseOption } from '$lib/features/exercises';
 
   interface Props {
-    answersHistory: ExerciseAnswersHistory[];
+    answersHistory: AnswerHistory[];
     options: ExerciseOption[];
   }
 

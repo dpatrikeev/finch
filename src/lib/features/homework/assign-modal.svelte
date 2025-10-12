@@ -7,12 +7,11 @@
   import { toast } from 'svelte-sonner';
   import { assignHomework } from './commands.remote';
   import { Student } from '$lib/components';
-
-  import type { BaseUser, ExerciseInfo } from '$lib/features/students/types';
+  import type { StudentInfo } from '$lib/features/students';
 
   interface Props {
-    student: BaseUser;
-    exercises: ExerciseInfo[];
+    student: StudentInfo;
+    exercises: Array<{ id: string; title: string; description?: string }>;
     isOpen?: boolean;
     onClose?: () => void;
     onAssigned?: () => void;
