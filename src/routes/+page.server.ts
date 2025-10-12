@@ -1,23 +1,10 @@
-import {
-  getExercises,
-  getExerciseStatus,
-} from '$lib/features/exercises/queries.remote';
+import { getExercisesWithStatus } from '$lib/features/exercises';
 import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async () => {
-  const exercises = await getExercises();
-  const exercisesWithStatus = await Promise.all(
-    exercises.map(async (exercise) => {
-      const status = await getExerciseStatus(exercise.id);
-
-      return {
-        ...exercise,
-        ...status,
-      };
-    })
-  );
+  const exercises = await getExercisesWithStatus();
 
   return {
-    exercises: exercisesWithStatus,
+    exercises,
   };
 };

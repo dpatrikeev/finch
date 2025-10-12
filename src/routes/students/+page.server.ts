@@ -1,4 +1,4 @@
-import { getExercises } from '$lib/features/exercises/queries.remote';
+import { getExercises } from '$lib/features/exercises';
 import { getTeacherStudents } from '$lib/features/students/queries.remote';
 import type { PageServerLoad } from './$types';
 

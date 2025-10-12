@@ -3,7 +3,7 @@
   import * as Card from '$lib/components/ui/card';
   import * as Tooltip from '$lib/components/ui/tooltip';
   import { CircleCheck, CircleX, History } from 'lucide-svelte';
-  import type { ExerciseOption } from '$lib/features/exercises/types';
+  import type { ExerciseOption } from '$lib/features/exercises';
   import { formatAnswerDate } from '$lib/features/quiz/utils';
 
   interface Props {

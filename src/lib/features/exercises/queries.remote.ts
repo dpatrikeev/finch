@@ -7,8 +7,8 @@ import type {
   ExerciseAnswersHistory,
   ExerciseStatus,
   QuizExercise,
-} from '$lib/features/exercises/types';
-import type { ExerciseInfo } from '$lib/features/students/types';
+  ExerciseInfo,
+} from './types';
 
 /**
  * Загружает доступные упражнения
@@ -28,6 +28,71 @@ export const getExercises = query(async (): Promise<ExerciseInfo[]> => {
 
   return exercises || [];
 });
+
+/**
+ * Загружает упражнения со статусом выполнения для текущего пользователя
+ */
+export const getExercisesWithStatus = query(
+  async (): Promise<(ExerciseInfo & ExerciseStatus)[]> => {
+    const { locals } = getRequestEvent();
+    const auth = locals.auth();
+    const userId = auth.userId as string;
+
+    // Получаем все упражнения
+    const { data: exercises, error: exercisesError } = await supabase(locals)
+      .from('exercises')
+      .select('id, title, description')
+      .order('id');
+
+    if (exercisesError) {
+      console.error('Error fetching exercises:', exercisesError);
+      return [];
+    }
+
+    if (!exercises || exercises.length === 0) {
+      return [];
+    }
+
+    // Получаем последние ответы пользователя для всех упражнений одним запросом
+    const { data: answers, error: answersError } = await supabase(locals)
+      .from('answers_history')
+      .select('exercise_id, is_correct, answered_at')
+      .eq('user_id', userId)
+      .order('answered_at', { ascending: false });
+
+    if (answersError) {
+      console.error('Error fetching answers:', answersError);
+      // Возвращаем упражнения без статуса
+      return exercises.map((ex) => ({
+        ...ex,
+        isCompleted: false,
+        isCorrect: false,
+      }));
+    }
+
+    // Создаем карту последних ответов по exercise_id
+    const lastAnswersMap = new Map<string, { is_correct: boolean }>();
+    (answers || []).forEach((answer) => {
+      if (!lastAnswersMap.has(answer.exercise_id)) {
+        lastAnswersMap.set(answer.exercise_id, {
+          is_correct: answer.is_correct,
+        });
+      }
+    });
+
+    // Объединяем упражнения со статусами
+    return exercises.map((ex) => {
+      const lastAnswer = lastAnswersMap.get(ex.id);
+      return {
+        id: ex.id,
+        title: ex.title,
+        description: ex.description,
+        isCompleted: !!lastAnswer,
+        isCorrect: lastAnswer?.is_correct || false,
+      };
+    });
+  }
+);
 
 /**
  * Получает статус выполнения конкретного упражнения для текущего пользователя

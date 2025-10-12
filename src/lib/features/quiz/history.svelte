@@ -6,7 +6,7 @@
   import type {
     ExerciseAnswersHistory,
     ExerciseOption,
-  } from '$lib/features/exercises/types';
+  } from '$lib/features/exercises';
 
   interface Props {
     answersHistory: ExerciseAnswersHistory[];

@@ -2,7 +2,7 @@
   import { Button } from '$lib/components/ui/button';
   import { SignedIn, SignedOut, SignInButton } from 'svelte-clerk';
   import { BookOpen } from 'lucide-svelte';
-  import ListItem from '$lib/features/exercises/list-item.svelte';
+  import { ListItem } from '$lib/features/exercises';
 
   let { data } = $props();
   let { exercises } = $derived(data);

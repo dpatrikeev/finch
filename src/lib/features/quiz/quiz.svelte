@@ -7,9 +7,9 @@
   import type {
     ExerciseAnswersHistory,
     QuizExercise,
-  } from '$lib/features/exercises/types';
+  } from '$lib/features/exercises';
   import { isCorrectAnswer } from '$lib/features/quiz/utils';
-  import { saveAnswer } from '../exercises/mutations.remote';
+  import { saveAnswer } from '$lib/features/exercises';
   import QuizOption from './option.svelte';
   import QuizHistory from './history.svelte';
   import QuizExplanation from './explanation.svelte';
