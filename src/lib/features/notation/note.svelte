@@ -16,7 +16,7 @@
     }[];
   };
 
-  const { attributes, innerHTML, noteheads }: Props = $props();
+  let { attributes, innerHTML, noteheads }: Props = $props();
 </script>
 
 <g {...attributes}>

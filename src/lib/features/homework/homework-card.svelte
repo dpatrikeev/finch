@@ -12,7 +12,7 @@
     showDetails?: boolean;
   }
 
-  const { homework, studentId, showDetails = true }: Props = $props();
+  let { homework, studentId, showDetails = true }: Props = $props();
 
   // Форматируем дату
   const formatDate = (dateStr: string) => {

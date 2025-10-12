@@ -8,8 +8,8 @@
     readonly options: Options;
   };
 
-  const { score, notation }: Props = $props();
-  const { attributes } = $derived(score);
+  let { score, notation }: Props = $props();
+  let { attributes } = $derived(score);
 </script>
 
 <svg xmlns="http://www.w3.org/2000/svg" {...attributes}>

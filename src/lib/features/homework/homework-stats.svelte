@@ -15,7 +15,7 @@
     };
   }
 
-  const { homework, user }: Props = $props();
+  let { homework, user }: Props = $props();
 
   // Общая статистика по всем домашкам
   const overallStats = $derived(calculateOverallStats(homework));

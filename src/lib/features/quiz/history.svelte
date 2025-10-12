@@ -14,7 +14,7 @@
   let { answersHistory, options }: Props = $props();
 
   // Функция для получения метки опции
-  function getOptionLabel(optionId: string, options: any[]) {
+  function getOptionLabel(optionId: string, options: ExerciseOption[]) {
     const index = options.findIndex((option) => option.id === optionId);
     return index >= 0 ? String.fromCharCode(65 + index) : '?';
   }

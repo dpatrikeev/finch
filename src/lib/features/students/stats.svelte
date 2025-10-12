@@ -6,7 +6,7 @@
     stats: StudentsStatsData;
   }
 
-  const { stats }: Props = $props();
+  let { stats }: Props = $props();
 </script>
 
 <Card.Root class="mb-8">

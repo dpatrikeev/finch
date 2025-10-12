@@ -29,12 +29,7 @@
 
 <Sheet.Root bind:open={isMobileOpen}>
   <Sheet.Trigger>
-    <Button
-      variant="ghost"
-      size="sm"
-      class="p-2 md:hidden"
-      onclick={handleClose}
-    >
+    <Button variant="ghost" size="sm" class="p-2 md:hidden">
       <Menu class="w-5 h-5" />
     </Button>
   </Sheet.Trigger>

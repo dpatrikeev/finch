@@ -47,7 +47,7 @@
   </section>
 </SignedIn>
 
-<style>
+<style lang="postcss">
   @reference "app.css";
 
   .card {

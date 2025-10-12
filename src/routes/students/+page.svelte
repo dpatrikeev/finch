@@ -4,13 +4,15 @@
   import { GraduationCap } from 'lucide-svelte';
   import { AssignHomeworkButton } from '$lib/features/homework';
   import { calculateStudentsStats } from '$lib/features/students/utils';
+  import { getTeacherStudents } from '$lib/features/students';
+  import { getExercises } from '$lib/features/exercises';
   import StudentsStats from '$lib/features/students/stats.svelte';
   import StudentCard from '$lib/features/students/card.svelte';
   import EmptyStudents from './empty.svelte';
 
-  let { data } = $props();
-  let { exercises, students } = $derived(data);
-  let stats = $derived(calculateStudentsStats(students, exercises.length));
+  const exercises = $derived(await getExercises());
+  const students = $derived(await getTeacherStudents());
+  const stats = $derived(calculateStudentsStats(students, exercises.length));
 </script>
 
 <svelte:head>

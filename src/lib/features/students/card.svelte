@@ -14,7 +14,7 @@
     children?: Snippet;
   }
 
-  const { student, children }: Props = $props();
+  let { student, children }: Props = $props();
 </script>
 
 <Card.Root class="hover:shadow-md transition-shadow">

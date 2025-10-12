@@ -69,7 +69,6 @@
     overflow-x: auto;
   }
 
-  /* Адаптивные отступы для мобильных устройств */
   @media (max-width: 640px) {
     .notation {
       padding: 12px;

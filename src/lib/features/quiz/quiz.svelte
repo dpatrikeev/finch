@@ -4,7 +4,7 @@
   import { Separator } from '$lib/components/ui/separator';
   import { toast } from 'svelte-sonner';
   import { Clock, Eye } from 'lucide-svelte';
-  import type { QuizExercise, AnswerHistory } from './types';
+  import type { ExerciseQuiz, AnswerHistory } from './types';
   import { Notation } from '$lib/features/notation';
   import { isCorrectAnswer } from './utils';
   import { saveAnswer } from '$lib/features/exercises';
@@ -13,7 +13,7 @@
   import QuizExplanation from './explanation.svelte';
 
   interface Props {
-    exercise: QuizExercise;
+    exercise: ExerciseQuiz;
     answersHistory: AnswerHistory[];
   }
 

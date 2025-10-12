@@ -6,7 +6,7 @@ export type {
   ExerciseStatus,
   ExerciseInfo,
   ExerciseOption,
-  QuizExercise,
+  ExerciseQuiz,
   ExerciseAnswersHistory,
 } from './types';
 
@@ -20,4 +20,4 @@ export {
 } from './queries.remote';
 
 // Mutations
-export { saveAnswer } from './mutations.remote';
+export { saveAnswer } from './commands.remote';

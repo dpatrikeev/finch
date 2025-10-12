@@ -6,7 +6,7 @@ import { error } from '@sveltejs/kit';
 import type {
   ExerciseAnswersHistory,
   ExerciseStatus,
-  QuizExercise,
+  ExerciseQuiz,
   ExerciseInfo,
 } from './types';
 
@@ -133,7 +133,7 @@ export const getExerciseStatus = query(
  */
 export const getExercise = prerender(
   string(),
-  async (exerciseId: string): Promise<QuizExercise> => {
+  async (exerciseId: string): Promise<ExerciseQuiz> => {
     const { request } = getRequestEvent();
     const url = new URL(request.url);
     const baseUrl = `${url.protocol}//${url.host}`;

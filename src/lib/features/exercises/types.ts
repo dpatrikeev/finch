@@ -17,7 +17,16 @@ export type ExerciseOption = {
   isCorrect?: boolean;
 };
 
-export type QuizExercise = {
+export interface ExerciseAnswersHistory {
+  id: number;
+  user_id: string;
+  exercise_id: string;
+  selected_answer_id: string;
+  is_correct: boolean;
+  answered_at: string;
+}
+
+export type ExerciseQuiz = {
   id: string;
   title: string;
   description?: string;
@@ -27,12 +36,3 @@ export type QuizExercise = {
   correctAnswerId: string;
   explanation?: string;
 };
-
-export interface ExerciseAnswersHistory {
-  id: number;
-  user_id: string;
-  exercise_id: string;
-  selected_answer_id: string;
-  is_correct: boolean;
-  answered_at: string;
-}

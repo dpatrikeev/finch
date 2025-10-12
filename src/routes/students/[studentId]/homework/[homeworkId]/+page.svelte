@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { PageData } from './$types';
+  import { page } from '$app/state';
   import {
     getHomeworkStats,
     getAvailableExercises,
@@ -9,16 +9,17 @@
   import { Button } from '$lib/components/ui/button';
   import { ArrowLeft } from 'lucide-svelte';
 
-  let { data }: { data: PageData } = $props();
+  const studentId = $derived(page.params.studentId || '');
+  const homeworkId = $derived(parseInt(page.params.homeworkId || '0'));
 
   // Прямая загрузка данных в компоненте
   const stats = $derived(
     await getHomeworkStats({
-      homeworkId: data.homeworkId,
-      studentId: data.studentId,
+      homeworkId,
+      studentId,
     })
   );
-  const student = $derived(await getStudentById(data.studentId));
+  const student = $derived(await getStudentById(studentId));
   const exercises = $derived(await getAvailableExercises());
 </script>
 
@@ -36,7 +37,7 @@
     <div class="mb-4 md:mb-6">
       <Button
         variant="ghost"
-        href="/students/{data.studentId}"
+        href="/students/{studentId}"
         class="gap-2 text-sm md:text-base px-2 md:px-4"
       >
         <ArrowLeft class="w-4 h-4" />

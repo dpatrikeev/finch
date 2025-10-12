@@ -6,7 +6,7 @@
     readonly innerHTML: string;
   };
 
-  const { attributes, innerHTML }: Props = $props();
+  let { attributes, innerHTML }: Props = $props();
 </script>
 
 <text {...attributes}>

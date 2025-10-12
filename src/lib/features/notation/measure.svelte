@@ -10,9 +10,9 @@
     readonly index: number;
   };
 
-  const { measure }: Props = $props();
-  const { staves, clefs, keySignatures, barlines, texts } = measure;
-  const { attributes, notes } = $derived(measure);
+  let { measure }: Props = $props();
+  let { staves, clefs, keySignatures, barlines, texts } = measure;
+  let { attributes, notes } = $derived(measure);
 </script>
 
 <g {...attributes}>

@@ -1,9 +1,12 @@
 <script lang="ts">
+  import { page } from '$app/state';
   import { Title } from '$lib/components';
   import { Quiz } from '$lib/features/quiz';
+  import { getExercise, getAnswersHistory } from '$lib/features/exercises';
 
-  let { data } = $props();
-  let { exercise, answersHistory } = $derived(data);
+  const exerciseId = $derived(page.params.id || '');
+  const exercise = $derived(await getExercise(exerciseId));
+  const answersHistory = $derived(await getAnswersHistory(exerciseId));
 </script>
 
 <section class="mx-auto p-5 md:p-10">

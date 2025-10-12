@@ -1,13 +1,13 @@
 <script lang="ts">
-  import type { PageData } from './$types';
+  import { page } from '$app/state';
   import { StudentDetail } from '$lib/features/students';
   import { Spinner } from '$lib/components';
 
-  let { data }: { data: PageData } = $props();
+  const studentId = $derived(page.params.studentId || '');
 </script>
 
 <svelte:boundary>
-  <StudentDetail studentId={data.studentId} />
+  <StudentDetail {studentId} />
 
   {#snippet pending()}
     <div class="flex justify-center py-8">

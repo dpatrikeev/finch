@@ -1,7 +1,16 @@
 <script lang="ts">
-  import { Homework } from '$lib/features/homework';
   import { Spinner } from '$lib/components';
   import { BookOpenCheck } from 'lucide-svelte';
+  import {
+    getMyHomework,
+    getCurrentUserInfo,
+    HomeworkCard,
+    HomeworkStatsCard,
+    EmptyHomework,
+  } from '$lib/features/homework';
+
+  const homework = $derived(await getMyHomework());
+  const userInfo = $derived(await getCurrentUserInfo());
 </script>
 
 <svelte:head>
@@ -17,7 +26,19 @@
       </h1>
     </div>
 
-    <Homework />
+    {#if homework.length === 0}
+      <EmptyHomework />
+    {:else}
+      {#if userInfo}
+        <HomeworkStatsCard {homework} user={userInfo} />
+      {/if}
+
+      <div class="space-y-4 md:space-y-6">
+        {#each homework as hw}
+          <HomeworkCard homework={hw} showDetails={false} />
+        {/each}
+      </div>
+    {/if}
   </section>
 
   {#snippet pending()}

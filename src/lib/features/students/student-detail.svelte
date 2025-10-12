@@ -13,7 +13,7 @@
     studentId: string;
   }
 
-  const { studentId }: Props = $props();
+  let { studentId }: Props = $props();
 
   const student = $derived(await getStudentById(studentId));
   const homework = $derived(await getStudentHomeworkWithProgress(studentId));

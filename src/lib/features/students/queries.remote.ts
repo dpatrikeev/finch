@@ -31,22 +31,49 @@ export const getTeacherStudents = query(async (): Promise<StudentInfo[]> => {
     return [];
   }
 
+  const studentIds = studentRelations.map((r) => r.student_id);
+
+  // Получаем статистику всех студентов одним запросом
+  const { data: allAnswers } = await supabase(locals)
+    .from('answers_history')
+    .select('user_id, exercise_id, is_correct, answered_at')
+    .in('user_id', studentIds)
+    .order('answered_at', { ascending: true });
+
+  // Группируем ответы по студентам
+  const answersByStudent = new Map<
+    string,
+    Array<{ exercise_id: string; is_correct: boolean; answered_at: string }>
+  >();
+  (allAnswers || []).forEach((answer) => {
+    if (!answersByStudent.has(answer.user_id)) {
+      answersByStudent.set(answer.user_id, []);
+    }
+    answersByStudent.get(answer.user_id)!.push({
+      exercise_id: answer.exercise_id,
+      is_correct: answer.is_correct,
+      answered_at: answer.answered_at,
+    });
+  });
+
   const students: StudentInfo[] = [];
 
   for (const relation of studentRelations) {
     try {
       const user = await clerkClient.users.getUser(relation.student_id);
+      const answers = answersByStudent.get(relation.student_id) || [];
 
-      // Получаем статистику студента
-      const { data: answers } = await supabase(locals)
-        .from('answers_history')
-        .select('exercise_id, is_correct')
-        .eq('user_id', relation.student_id);
+      // Группируем ответы по упражнениям и берем только последний ответ для каждого
+      // Ответы отсортированы по answered_at, поэтому последние перезапишут ранние
+      const exerciseMap = new Map<string, boolean>();
+      answers.forEach((answer) => {
+        exerciseMap.set(answer.exercise_id, answer.is_correct);
+      });
 
-      // Подсчитываем уникальные упражнения и правильные ответы
-      const uniqueExercises = new Set(answers?.map((a) => a.exercise_id) || []);
-      const correctAnswers = answers?.filter((a) => a.is_correct).length || 0;
-      const totalExercises = uniqueExercises.size;
+      const totalExercises = exerciseMap.size;
+      const correctAnswers = Array.from(exerciseMap.values()).filter(
+        (isCorrect) => isCorrect
+      ).length;
 
       students.push({
         id: user.id,
@@ -100,13 +127,21 @@ export const getStudentById = query(
       // Получаем статистику студента
       const { data: answers } = await supabase(locals)
         .from('answers_history')
-        .select('exercise_id, is_correct')
-        .eq('user_id', studentId);
+        .select('exercise_id, is_correct, answered_at')
+        .eq('user_id', studentId)
+        .order('answered_at', { ascending: true });
 
-      // Подсчитываем уникальные упражнения и правильные ответы
-      const uniqueExercises = new Set(answers?.map((a) => a.exercise_id) || []);
-      const correctAnswers = answers?.filter((a) => a.is_correct).length || 0;
-      const totalExercises = uniqueExercises.size;
+      // Группируем ответы по упражнениям и берем только последний ответ для каждого
+      // Ответы отсортированы по answered_at, поэтому последние перезапишут ранние
+      const exerciseMap = new Map<string, boolean>();
+      (answers || []).forEach((answer) => {
+        exerciseMap.set(answer.exercise_id, answer.is_correct);
+      });
+
+      const totalExercises = exerciseMap.size;
+      const correctAnswers = Array.from(exerciseMap.values()).filter(
+        (isCorrect) => isCorrect
+      ).length;
 
       return {
         id: user.id,
@@ -122,7 +157,7 @@ export const getStudentById = query(
             : 0,
       };
     } catch (error) {
-      console.error('Error in getStudentById:', error);
+      console.error('Ошибка при загрузке данных студента:', error);
       return null;
     }
   }

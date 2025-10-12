@@ -6,7 +6,6 @@ import { validateExercises } from './utils';
 import {
   getStudentHomeworkWithProgress,
   getMyHomework,
-  getHomeworkStats,
 } from './queries.remote';
 import type { HomeworkItem } from './types';
 
@@ -51,9 +50,8 @@ export const assignHomework = command(
         throw error(500, 'Ошибка при назначении домашнего задания');
       }
 
-      // Обновляем связанные queries
+      // Обновляем домашку студента
       await getStudentHomeworkWithProgress(studentId).refresh();
-      await getMyHomework().refresh();
 
       return { success: true, homework: data };
     } catch (err) {
@@ -115,7 +113,6 @@ export const assignHomeworkToMultiple = command(
       for (const studentId of studentIds) {
         await getStudentHomeworkWithProgress(studentId).refresh();
       }
-      await getMyHomework().refresh();
 
       return { success: true, homework: data };
     } catch (err) {
@@ -174,12 +171,8 @@ export const updateHomework = command(
         throw error(500, 'Ошибка при обновлении домашнего задания');
       }
 
-      // Обновляем связанные queries
+      // Обновляем домашку студента (статистика обновится через зависимости)
       await getStudentHomeworkWithProgress(homework.student_id).refresh();
-      await getHomeworkStats({
-        homeworkId,
-        studentId: homework.student_id,
-      }).refresh();
 
       return { success: true, homework: data };
     } catch (err) {

@@ -143,13 +143,21 @@ export const getCurrentUserInfo = query(async () => {
     // Получаем статистику пользователя
     const { data: answers } = await supabase(locals)
       .from('answers_history')
-      .select('exercise_id, is_correct')
-      .eq('user_id', userId);
+      .select('exercise_id, is_correct, answered_at')
+      .eq('user_id', userId)
+      .order('answered_at', { ascending: true });
 
-    // Подсчитываем уникальные упражнения и правильные ответы
-    const uniqueExercises = new Set(answers?.map((a) => a.exercise_id) || []);
-    const correctAnswers = answers?.filter((a) => a.is_correct).length || 0;
-    const totalExercises = uniqueExercises.size;
+    // Группируем ответы по упражнениям и берем только последний ответ для каждого
+    // Ответы отсортированы по answered_at, поэтому последние перезапишут ранние
+    const exerciseMap = new Map<string, boolean>();
+    (answers || []).forEach((answer) => {
+      exerciseMap.set(answer.exercise_id, answer.is_correct);
+    });
+
+    const totalExercises = exerciseMap.size;
+    const correctAnswers = Array.from(exerciseMap.values()).filter(
+      (isCorrect) => isCorrect
+    ).length;
 
     return {
       id: user.id,

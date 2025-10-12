@@ -17,7 +17,7 @@
     onAssigned?: () => void;
   }
 
-  const {
+  let {
     isOpen = false,
     student,
     exercises,

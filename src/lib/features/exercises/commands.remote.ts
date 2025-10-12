@@ -2,7 +2,7 @@ import { command, getRequestEvent } from '$app/server';
 import { supabase } from '$lib/server/database';
 import { boolean, object, string } from 'valibot';
 import { error } from '@sveltejs/kit';
-import { getAnswersHistory, getExerciseStatus } from './queries.remote';
+import { getAnswersHistory } from './queries.remote';
 
 /**
  * Сохраняет ответ пользователя на упражнение
@@ -39,9 +39,8 @@ export const saveAnswer = command(
       throw error(500, 'Ошибка при сохранении ответа');
     }
 
-    // Обновляем связанные queries
+    // Обновляем историю ответов (статус обновится автоматически через зависимости)
     await getAnswersHistory(exerciseId).refresh();
-    await getExerciseStatus(exerciseId).refresh();
 
     return { success: true, answer: data };
   }
