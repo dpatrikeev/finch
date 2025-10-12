@@ -4,7 +4,10 @@
   import { Separator } from '$lib/components/ui/separator';
   import { toast } from 'svelte-sonner';
   import { Clock, Eye } from 'lucide-svelte';
-  import type { ExerciseQuiz, AnswerHistory } from './types';
+  import type {
+    ExerciseQuiz,
+    ExerciseAnswersHistory,
+  } from '$lib/features/exercises';
   import { Notation } from '$lib/features/notation';
   import { isCorrectAnswer } from './utils';
   import { saveAnswer } from '$lib/features/exercises';
@@ -14,7 +17,7 @@
 
   interface Props {
     exercise: ExerciseQuiz;
-    answersHistory: AnswerHistory[];
+    answersHistory: ExerciseAnswersHistory[];
   }
 
   let { exercise, answersHistory }: Props = $props();

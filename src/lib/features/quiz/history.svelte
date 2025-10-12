@@ -3,11 +3,13 @@
   import * as Card from '$lib/components/ui/card';
   import { CircleCheck, CircleX, History } from 'lucide-svelte';
   import { formatAnswerDate } from './utils';
-  import type { AnswerHistory } from './types';
-  import type { ExerciseOption } from '$lib/features/exercises';
+  import type {
+    ExerciseOption,
+    ExerciseAnswersHistory,
+  } from '$lib/features/exercises';
 
   interface Props {
-    answersHistory: AnswerHistory[];
+    answersHistory: ExerciseAnswersHistory[];
     options: ExerciseOption[];
   }
 
