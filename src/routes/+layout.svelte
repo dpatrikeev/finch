@@ -1,12 +1,14 @@
 <script lang="ts">
   import '../app.css';
 
+  import type { LayoutProps } from './$types';
   import { ClerkProvider } from 'svelte-clerk';
   import { ruRU } from '@clerk/localizations';
   import { Toaster } from '$lib/components/ui/sonner';
-  import Header from '$lib/features/header/header.svelte';
+  import { Header } from '$lib/features/header';
+  import { HomeworkBadge } from '$lib/features/homework';
 
-  let { children } = $props();
+  let { children }: LayoutProps = $props();
 </script>
 
 <svelte:head>
@@ -21,8 +23,12 @@
 
 <ClerkProvider localization={ruRU}>
   <main class="min-h-screen relative overflow-hidden">
-    <Header />
+    <Header {homeworkBadge} />
     {@render children()}
   </main>
   <Toaster />
 </ClerkProvider>
+
+{#snippet homeworkBadge()}
+  <HomeworkBadge />
+{/snippet}

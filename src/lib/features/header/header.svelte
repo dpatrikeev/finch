@@ -1,7 +1,14 @@
 <script lang="ts">
+  import type { Snippet } from 'svelte';
   import { SignedIn, UserButton } from 'svelte-clerk';
   import Logo from './logo.svelte';
   import Menu from './menu.svelte';
+
+  interface Props {
+    homeworkBadge?: Snippet;
+  }
+
+  let { homeworkBadge }: Props = $props();
 </script>
 
 <header class="w-full h-12">
@@ -12,7 +19,7 @@
 
     <SignedIn>
       <div class="flex items-center gap-2">
-        <Menu />
+        <Menu {homeworkBadge} />
         <div class="shrink-0 min-w-8 min-h-8 flex items-center justify-center">
           <UserButton />
         </div>

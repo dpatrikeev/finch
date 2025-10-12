@@ -1,4 +1,5 @@
 <script lang="ts">
+  import type { Snippet } from 'svelte';
   import { Menu } from 'lucide-svelte';
   import { useClerkContext } from 'svelte-clerk';
   import { Button } from '$lib/components/ui/button';
@@ -6,8 +7,13 @@
   import { getNavigationItems } from './utils';
   import Nav from './nav.svelte';
 
+  interface Props {
+    homeworkBadge?: Snippet;
+  }
+
+  let { homeworkBadge }: Props = $props();
+
   let ctx = useClerkContext();
-  let userId = $derived(ctx.auth.userId) as string;
   let userRole = $derived(ctx.user?.publicMetadata.role || 'student');
   let navigationItems = $derived(getNavigationItems(userRole));
   let isMobileOpen = $state(false);
@@ -18,7 +24,7 @@
 </script>
 
 <div class="hidden md:flex justify-center gap-4">
-  <Nav {navigationItems} {userId} />
+  <Nav {navigationItems} {homeworkBadge} />
 </div>
 
 <Sheet.Root bind:open={isMobileOpen}>
@@ -39,7 +45,7 @@
     <div class="p-4 w-full flex flex-col">
       <Nav
         {navigationItems}
-        {userId}
+        {homeworkBadge}
         {handleClose}
         class="w-full justify-start mb-2 bg-secondary/40"
       />

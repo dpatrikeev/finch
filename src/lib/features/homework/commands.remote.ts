@@ -11,7 +11,6 @@ import {
 import { supabase } from '$lib/server/database';
 import { error } from '@sveltejs/kit';
 import { validateExercises } from './utils';
-import { getStudentHomework } from './queries.remote';
 
 /**
  * Назначает домашнее задание студенту
@@ -52,9 +51,6 @@ export const assignHomework = command(
       console.error('Error assigning homework:', insertError);
       throw error(500, 'Ошибка при назначении домашнего задания');
     }
-
-    // Обновляем связанные queries
-    await getStudentHomework(studentId).refresh();
 
     return { success: true, homework: data };
   }
@@ -107,9 +103,6 @@ export const updateHomework = command(
       console.error('Error updating homework:', updateError);
       throw error(500, 'Ошибка при обновлении домашнего задания');
     }
-
-    // Обновляем связанные queries
-    await getStudentHomework(homework.student_id).refresh();
 
     return { success: true, homework: data };
   }

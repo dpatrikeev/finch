@@ -1,42 +1,47 @@
-import { subDays, formatISO } from 'date-fns';
 import { getRequestEvent, query } from '$app/server';
-import { string } from 'valibot';
 import { supabase } from '$lib/server/database';
 import { createHomeworkWithProgress } from './utils';
 import type { HomeworkWithProgress } from './types';
 
-export const getHomeworkCount = query(string(), async (studentId: string) => {
+export const getHomeworkCount = query(async () => {
   const { locals } = getRequestEvent();
+  const auth = locals.auth();
+  const userId = auth.userId;
 
-  // Для простоты будем считать новыми все домашки за последние 24 часа
-  const oneDayAgo = subDays(new Date(), 1);
+  if (!userId) {
+    return 0;
+  }
 
   const { data: homework, error } = await supabase(locals)
     .from('homework')
     .select('id')
-    .eq('student_id', studentId)
-    .gte('created_at', formatISO(oneDayAgo));
+    .eq('student_id', userId);
 
   if (error) {
     console.error('Error fetching new homework count:', error);
     return 0;
   }
 
-  return homework?.length || 0;
+  return homework?.length;
 });
 
 /**
  * Загружает домашние задания студента с прогрессом
  */
 export const getStudentHomework = query(
-  string(),
-  async (studentId: string): Promise<HomeworkWithProgress[]> => {
+  async (): Promise<HomeworkWithProgress[]> => {
     const { locals } = getRequestEvent();
+    const auth = locals.auth();
+    const userId = auth.userId;
+
+    if (!userId) {
+      return [];
+    }
 
     const { data: homework, error: homeworkError } = await supabase(locals)
       .from('homework')
       .select('*')
-      .eq('student_id', studentId)
+      .eq('student_id', userId)
       .order('created_at', { ascending: false });
 
     if (homeworkError) {
@@ -54,7 +59,7 @@ export const getStudentHomework = query(
       .from('answers_history')
       .select('*')
       .in('exercise_id', exerciseIds)
-      .eq('user_id', studentId);
+      .eq('user_id', userId);
 
     if (answersError) {
       console.error('Error fetching answer records:', answersError);
