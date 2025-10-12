@@ -1,5 +1,6 @@
 ---
-alwaysApply: true
+description: Когда я прошу делать новые фичи или редактировать разметку UI
+alwaysApply: false
 ---
 
 # shadcn-svelte — LLM.txt
@@ -8,10 +9,10 @@ alwaysApply: true
 
 ## Общие правила
 
-* Импорт: `import { X } from "$lib/components/ui/<name>"` или `import * as X from "$lib/components/ui/<name>"` для «групповых» компонентов (Tabs, Card и т.п.).
-* Частые пропсы: `variant`, `size`, `class`, `href` (для ссылок).
-* Для иконок используйте `lucide-svelte`.
-* Многие компоненты завязаны на `bits-ui` (под капотом) и Tailwind.
+- Импорт: `import { X } from "$lib/components/ui/<name>"` или `import * as X from "$lib/components/ui/<name>"` для «групповых» компонентов (Tabs, Card и т.п.).
+- Частые пропсы: `variant`, `size`, `class`, `href` (для ссылок).
+- Для иконок используйте `lucide-svelte`.
+- Многие компоненты завязаны на `bits-ui` (под капотом) и Tailwind.
 
 ---
 
@@ -298,12 +299,12 @@ alwaysApply: true
 
 ## Дополнительно (по аналогии)
 
-* **Sheet/Drawer**: боковая панель с `Sheet.Root`, `Sheet.Trigger`, `Sheet.Content`.
-* **Popover/Hover Card**: всплывающие контейнеры над якорем.
-* **Slider/Progress**: ввод диапазона и индикатор выполнения.
-* **Pagination**: навигация по страницам списков.
-* **Breadcrumb**: иерархические ссылки навигации.
-* **Avatar/Badge/Skeleton**: декоративные и статусные элементы.
+- **Sheet/Drawer**: боковая панель с `Sheet.Root`, `Sheet.Trigger`, `Sheet.Content`.
+- **Popover/Hover Card**: всплывающие контейнеры над якорем.
+- **Slider/Progress**: ввод диапазона и индикатор выполнения.
+- **Pagination**: навигация по страницам списков.
+- **Breadcrumb**: иерархические ссылки навигации.
+- **Avatar/Badge/Skeleton**: декоративные и статусные элементы.
 
 ---
 
@@ -331,4 +332,3 @@ $lib/components/ui/table         → * as Table
 ```
 
 > Подробные варианты (`variant`, `size`, состояния, дополнительные подпакеты) смотрите в исходниках компонентов — структура везде однотипная, примеры выше закрывают 80% кейсов.
-

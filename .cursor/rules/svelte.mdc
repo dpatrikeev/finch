@@ -1,5 +1,6 @@
 ---
-alwaysApply: true
+description: Когда речь идет о фичах Svelte 5 и Sveltekit
+alwaysApply: false
 ---
 
 Используй только последние стандарты Svelte 5 и SvelteKit согласно документу
@@ -44,12 +45,12 @@ You **MUST** use the Svelte 5 API unless explicitly tasked to write Svelte 4 syn
 - Use `$state` in class fields for reactive properties. For example:
   ```js
   class Todo {
-  	done = $state(false);
-  	text = $state('');
-  	reset = () => {
-  		this.text = '';
-  		this.done = false;
-  	};
+    done = $state(false);
+    text = $state('');
+    reset = () => {
+      this.text = '';
+      this.done = false;
+    };
   }
   ```
 
@@ -86,13 +87,13 @@ person = { name: 'Heraclitus', age: 50 }; // Correct way to update
 - Pass-by-Value Semantics: Use getter functions to ensure functions access the current value of reactive state. For example:
   ```js
   function add(getA, getB) {
-  	return () => getA() + getB();
+    return () => getA() + getB();
   }
   let a = 1,
-  	b = 2;
+    b = 2;
   let total = add(
-  	() => a,
-  	() => b
+    () => a,
+    () => b
   );
   console.log(total());
   ```
@@ -334,11 +335,11 @@ let { a, b, ...others } = $props();
 ```js
 /// file: svelte.config.js
 export default {
-	compilerOptions: {
-		experimental: {
-			async: true
-		}
-	}
+  compilerOptions: {
+    experimental: {
+      async: true,
+    },
+  },
 };
 ```
 
@@ -519,7 +520,6 @@ export default {
 <div class={{ cool, lame: !cool }}>Content</div>
 ```
 
-
 # SvelteKit documentation
 
 ## Project types
@@ -534,13 +534,13 @@ A SvelteKit project needs a `package.json` with the following contents at minimu
 
 ```json
 {
-	"devDependencies": {
-		"@sveltejs/adapter-auto": "^6.0.0",
-		"@sveltejs/kit": "^2.0.0",
-		"@sveltejs/vite-plugin-svelte": "^5.0.0",
-		"svelte": "^5.0.0",
-		"vite": "^6.0.0"
-	}
+  "devDependencies": {
+    "@sveltejs/adapter-auto": "^6.0.0",
+    "@sveltejs/kit": "^2.0.0",
+    "@sveltejs/vite-plugin-svelte": "^5.0.0",
+    "svelte": "^5.0.0",
+    "vite": "^6.0.0"
+  }
 }
 ```
 
@@ -553,7 +553,7 @@ import { defineConfig } from 'vite';
 import { sveltekit } from '@sveltejs/kit/vite';
 
 export default defineConfig({
-	plugins: [sveltekit()]
+  plugins: [sveltekit()],
 });
 ```
 
@@ -563,9 +563,9 @@ It also needs a `svelte.config.js` with the following at minimum:
 import adapter from '@sveltejs/adapter-auto';
 
 export default {
-	kit: {
-		adapter: adapter()
-	}
+  kit: {
+    adapter: adapter(),
+  },
 };
 ```
 
@@ -613,7 +613,7 @@ export const load: PageLoad = () => {
   return {
     title: 'Hello world!',
   };
-}
+};
 ```
 
 ### +page.server.js
@@ -654,13 +654,13 @@ export const load: PageLoad = () => {
 import type { LayoutLoad } from './$types';
 
 export const load: LayoutLoad = () => {
-	return {
-		sections: [
-			{ slug: 'profile', title: 'Profile' },
-			{ slug: 'notifications', title: 'Notifications' }
-		]
-	};
-}
+  return {
+    sections: [
+      { slug: 'profile', title: 'Profile' },
+      { slug: 'notifications', title: 'Notifications' },
+    ],
+  };
+};
 ```
 
 ### +server.js (Endpoints)
@@ -672,8 +672,8 @@ export const load: LayoutLoad = () => {
 import type { RequestHandler } from './$types';
 
 export const GET: RequestHandler = ({ url }) => {
-	return new Response('hello world');
-}
+  return new Response('hello world');
+};
 ```
 
 ### $types
@@ -698,8 +698,8 @@ Example:
 ```js
 // file: src/routes/foo/+page.js
 export async function load({ fetch }) {
-	const result = await fetch('/data/from/somewhere').then((r) => r.json());
-	return { result }; // return property "result"
+  const result = await fetch('/data/from/somewhere').then((r) => r.json());
+  return { result }; // return property "result"
 }
 ```
 
@@ -744,9 +744,9 @@ Use the provided `fetch` function for enhanced features:
 ```js
 // src/routes/items/[id]/+page.js
 export async function load({ fetch, params }) {
-	const res = await fetch(`/api/items/${params.id}`);
-	const item = await res.json();
-	return { item };
+  const res = await fetch(`/api/items/${params.id}`);
+  const item = await res.json();
+  return { item };
 }
 ```
 
@@ -756,14 +756,14 @@ Set response headers using `setHeaders`:
 
 ```js
 export async function load({ fetch, setHeaders }) {
-	const response = await fetch(url);
+  const response = await fetch(url);
 
-	setHeaders({
-		age: response.headers.get('age'),
-		'cache-control': response.headers.get('cache-control')
-	});
+  setHeaders({
+    age: response.headers.get('age'),
+    'cache-control': response.headers.get('cache-control'),
+  });
 
-	return response.json();
+  return response.json();
 }
 ```
 
@@ -771,10 +771,10 @@ Access cookies in server load functions using `cookies`:
 
 ```js
 export async function load({ cookies }) {
-	const sessionid = cookies.get('sessionid');
-	return {
-		user: await db.getUser(sessionid)
-	};
+  const sessionid = cookies.get('sessionid');
+  return {
+    user: await db.getUser(sessionid),
+  };
 }
 ```
 
@@ -786,8 +786,8 @@ Access data from parent load functions:
 
 ```js
 export async function load({ parent }) {
-	const { a } = await parent();
-	return { b: a + 1 };
+  const { a } = await parent();
+  return { b: a + 1 };
 }
 ```
 
@@ -799,9 +799,9 @@ Redirect users using `redirect`:
 import { redirect } from '@sveltejs/kit';
 
 export function load({ locals }) {
-	if (!locals.user) {
-		redirect(307, '/login');
-	}
+  if (!locals.user) {
+    redirect(307, '/login');
+  }
 }
 ```
 
@@ -811,9 +811,9 @@ Throw expected errors using `error`:
 import { error } from '@sveltejs/kit';
 
 export function load({ locals }) {
-	if (!locals.user) {
-		error(401, 'not logged in');
-	}
+  if (!locals.user) {
+    error(401, 'not logged in');
+  }
 }
 ```
 
@@ -825,10 +825,10 @@ Server load functions can stream promises as they resolve:
 
 ```js
 export async function load({ params }) {
-	return {
-		comments: loadComments(params.slug),
-		post: await loadPost(params.slug)
-	};
+  return {
+    comments: loadComments(params.slug),
+    post: await loadPost(params.slug),
+  };
 }
 ```
 
@@ -860,14 +860,14 @@ Manually invalidate load functions:
 ```js
 // In load function
 export async function load({ fetch, depends }) {
-	depends('app:random');
-	// ...
+  depends('app:random');
+  // ...
 }
 
 // In component
 import { invalidate } from '$app/navigation';
 function rerunLoadFunction() {
-	invalidate('app:random');
+  invalidate('app:random');
 }
 ```
 
@@ -877,9 +877,9 @@ Exclude from dependency tracking with `untrack`:
 
 ```js
 export async function load({ untrack, url }) {
-	if (untrack(() => url.pathname === '/')) {
-		return { message: 'Welcome!' };
-	}
+  if (untrack(() => url.pathname === '/')) {
+    return { message: 'Welcome!' };
+  }
 }
 ```
 
@@ -907,9 +907,9 @@ Example: Define a default action in `+page.server.js`:
 import type { Actions } from './$types';
 
 export const actions: Actions = {
-	default: async (event) => {
-		// TODO log the user in
-	}
+  default: async (event) => {
+    // TODO log the user in
+  },
 };
 ```
 
@@ -974,11 +974,11 @@ Use it with a simple form:
 
 ```js
 export default {
-	kit: {
-		experimental: {
-			remoteFunctions: true
-		}
-	}
+  kit: {
+    experimental: {
+      remoteFunctions: true,
+    },
+  },
 };
 ```
 
@@ -998,7 +998,7 @@ import { query } from '$app/server';
 import * as db from '$lib/server/database';
 
 export const getPosts = query(async () => {
-	return db.posts();
+  return db.posts();
 });
 ```
 
@@ -1021,7 +1021,7 @@ Use in component (recommended with await):
 ```js
 import * as v from 'valibot';
 export const getPost = query(v.string(), async (slug) => {
-	/* ... */
+  /* ... */
 });
 ```
 
@@ -1044,14 +1044,14 @@ import * as auth from '$lib/server/auth';
 import { error, redirect } from '@sveltejs/kit';
 
 export const createPost = form(async (data) => {
-	const user = await auth.getUser();
-	if (!user) error(401, 'Unauthorized');
+  const user = await auth.getUser();
+  if (!user) error(401, 'Unauthorized');
 
-	const title = data.get('title');
-	const content = data.get('content');
-	db.insertPost(title, content);
+  const title = data.get('title');
+  const content = data.get('content');
+  db.insertPost(title, content);
 
-	redirect(303, `/blog/${title}`);
+  redirect(303, `/blog/${title}`);
 });
 ```
 
@@ -1083,7 +1083,9 @@ Use:
   ```
   - Optimistic UI: use `withOverride`:
   ```js
-  await submit().updates(getPosts().withOverride((posts) => [newPost, ...posts]));
+  await submit().updates(
+    getPosts().withOverride((posts) => [newPost, ...posts])
+  );
   ```
 - **Returns**: Instead of redirect, return data; read at `createPost.result`.
 - **buttonProps**: For per-button `formaction`:
@@ -1103,11 +1105,11 @@ import * as v from 'valibot';
 import * as db from '$lib/server/database';
 
 export const getLikes = query(v.string(), async (id) => {
-	return db.likes.get(id);
+  return db.likes.get(id);
 });
 
 export const addLike = command(v.string(), async (id) => {
-	await db.likes.add(id);
+  await db.likes.add(id);
 });
 ```
 
@@ -1138,7 +1140,7 @@ import { prerender } from '$app/server';
 import * as db from '$lib/server/database';
 
 export const getPosts = prerender(async () => {
-	return db.sql`SELECT title, slug FROM post ORDER BY published_at DESC`;
+  return db.sql`SELECT title, slug FROM post ORDER BY published_at DESC`;
 });
 ```
 
@@ -1148,13 +1150,13 @@ export const getPosts = prerender(async () => {
 
 ```js
 export const getPost = prerender(
-	v.string(),
-	async (slug) => {
-		/* ... */
-	},
-	{
-		inputs: () => ['first-post', 'second-post']
-	}
+  v.string(),
+  async (slug) => {
+    /* ... */
+  },
+  {
+    inputs: () => ['first-post', 'second-post'],
+  }
 );
 ```
 
@@ -1169,7 +1171,7 @@ export const getPost = prerender(
 ```ts
 // src/hooks.server.ts
 export function handleValidationError() {
-	return { message: 'Nice try, hacker!' };
+  return { message: 'Nice try, hacker!' };
 }
 ```
 
@@ -1183,8 +1185,8 @@ export function handleValidationError() {
 import { getRequestEvent, query } from '$app/server';
 
 export const getProfile = query(async () => {
-	const { cookies, locals } = getRequestEvent();
-	// read cookies, reuse per-request work via locals, etc.
+  const { cookies, locals } = getRequestEvent();
+  // read cookies, reuse per-request work via locals, etc.
 });
 ```
 
@@ -1313,7 +1315,7 @@ The following are HTML attributes you can put on any HTML element.
   ```js
   import { error } from '@sveltejs/kit';
   export function load() {
-  	error(404, 'Not found');
+    error(404, 'Not found');
   }
   ```
 
@@ -1322,10 +1324,10 @@ The following are HTML attributes you can put on any HTML element.
   ```js
   import { fail } from '@sveltejs/kit';
   export const actions = {
-  	default: async ({ request }) => {
-  		const data = await request.formData();
-  		if (!data.get('name')) return fail(400, { missing: true });
-  	}
+    default: async ({ request }) => {
+      const data = await request.formData();
+      if (!data.get('name')) return fail(400, { missing: true });
+    },
   };
   ```
 
@@ -1334,7 +1336,7 @@ The following are HTML attributes you can put on any HTML element.
   ```js
   import { isActionFailure } from '@sveltejs/kit';
   if (isActionFailure(result)) {
-  	/* handle invalid form */
+    /* handle invalid form */
   }
   ```
 
@@ -1343,9 +1345,9 @@ The following are HTML attributes you can put on any HTML element.
   ```js
   import { isHttpError } from '@sveltejs/kit';
   try {
-  	/* … */
+    /* … */
   } catch (e) {
-  	if (isHttpError(e, 404)) console.log('Not found');
+    if (isHttpError(e, 404)) console.log('Not found');
   }
   ```
 
@@ -1354,9 +1356,9 @@ The following are HTML attributes you can put on any HTML element.
   ```js
   import { redirect, isRedirect } from '@sveltejs/kit';
   try {
-  	redirect(302, '/login');
+    redirect(302, '/login');
   } catch (e) {
-  	if (isRedirect(e)) console.log('Redirecting');
+    if (isRedirect(e)) console.log('Redirecting');
   }
   ```
 
@@ -1365,7 +1367,7 @@ The following are HTML attributes you can put on any HTML element.
   ```js
   import { json } from '@sveltejs/kit';
   export function GET() {
-  	return json({ hello: 'world' });
+    return json({ hello: 'world' });
   }
   ```
 
@@ -1382,7 +1384,7 @@ The following are HTML attributes you can put on any HTML element.
   ```js
   import { redirect } from '@sveltejs/kit';
   export function load() {
-  	redirect(303, '/dashboard');
+    redirect(303, '/dashboard');
   }
   ```
 
@@ -1391,7 +1393,7 @@ The following are HTML attributes you can put on any HTML element.
   ```js
   import { text } from '@sveltejs/kit';
   export function GET() {
-  	return text('Hello, text!');
+    return text('Hello, text!');
   }
   ```
 
@@ -1444,7 +1446,7 @@ The following are HTML attributes you can put on any HTML element.
   ```js
   import { beforeNavigate } from '$app/navigation';
   beforeNavigate(({ cancel }) => {
-  	if (!confirm('Leave?')) cancel();
+    if (!confirm('Leave?')) cancel();
   });
   ```
 
@@ -1536,8 +1538,8 @@ The following are HTML attributes you can put on any HTML element.
   ```js
   import { resolveRoute } from '$app/paths';
   resolveRoute('/blog/[slug]/[...rest]', {
-  	slug: 'hello',
-  	rest: '2024/updates'
+    slug: 'hello',
+    rest: '2024/updates',
   });
   // → "/blog/hello/2024/updates"
   ```
@@ -1549,8 +1551,8 @@ The following are HTML attributes you can put on any HTML element.
   ```js
   import { getRequestEvent } from '$app/server';
   export function load() {
-  	const event = getRequestEvent();
-  	console.log(event.url);
+    const event = getRequestEvent();
+    console.log(event.url);
   }
   ```
 
