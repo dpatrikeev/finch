@@ -1,7 +1,6 @@
 import { withClerkHandler } from 'svelte-clerk/server';
 import { sequence } from '@sveltejs/kit/hooks';
 import { redirect } from '@sveltejs/kit';
-import { getUserRole } from '$lib/features/user/queries.remote';
 
 import type { Handle } from '@sveltejs/kit';
 
@@ -28,18 +27,15 @@ const roleHandler: Handle = async ({ event, resolve }) => {
   const userId = auth.userId;
 
   if (userId) {
-    const userRole = await getUserRole(userId);
+    const userMetadata = auth.sessionClaims?.metadata as UserPublicMetadata;
+    const userRole = userMetadata.role;
 
-    if (pathname.startsWith('/students')) {
-      if (userRole !== 'teacher') {
-        redirect(302, '/');
-      }
+    if (pathname.startsWith('/homework') && userRole === 'teacher') {
+      redirect(302, '/students');
     }
 
-    if (pathname.startsWith('/homework')) {
-      if (userRole !== 'student') {
-        redirect(302, '/');
-      }
+    if (pathname.startsWith('/students') && userRole === 'student') {
+      redirect(302, '/homework');
     }
   }
 

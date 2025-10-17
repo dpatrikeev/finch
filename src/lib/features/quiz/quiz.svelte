@@ -3,14 +3,12 @@
   import * as Card from '$lib/components/ui/card';
   import { Separator } from '$lib/components/ui/separator';
   import { toast } from 'svelte-sonner';
-  import { Clock, Eye } from 'lucide-svelte';
-  import type {
-    ExerciseQuiz,
-    ExerciseAnswersHistory,
-  } from '$lib/features/exercises';
+  import Clock from '@lucide/svelte/icons/clock';
+  import Eye from '@lucide/svelte/icons/eye';
+  import type { ExerciseQuiz, ExerciseAnswersHistory } from '$lib/types';
   import { Notation } from '$lib/features/notation';
   import { isCorrectAnswer } from './utils';
-  import { saveAnswer } from '$lib/features/exercises';
+  import { saveAnswer } from '$lib/remote/exercises.remote';
   import QuizOption from './option.svelte';
   import QuizHistory from './history.svelte';
   import QuizExplanation from './explanation.svelte';
@@ -117,87 +115,85 @@
   }
 </script>
 
-<div class="container mx-auto px-0 py-6 max-w-7xl">
-  <!-- Вопрос -->
-  <Card.Root class="mb-6">
-    <Card.Header class="pb-4">
-      <Card.Title class="text-lg md:text-xl text-center">
-        Музыкальное упражнение
+<!-- Вопрос -->
+<Card.Root class="mb-6">
+  <Card.Header class="pb-4">
+    <Card.Title class="text-lg md:text-xl text-center">
+      Музыкальное упражнение
+    </Card.Title>
+  </Card.Header>
+  <Card.Content class="flex justify-center p-4 md:p-6">
+    <div class="notation-container">
+      <Notation measures={exercise.question} />
+    </div>
+  </Card.Content>
+</Card.Root>
+
+<!-- Основной грид -->
+<div class="grid gap-6">
+  <!-- Секция с вариантами ответов -->
+  <Card.Root>
+    <Card.Header>
+      <Card.Title class="flex items-center gap-2">
+        <Clock class="w-5 h-5 text-primary" />
+        Выберите правильный ответ
       </Card.Title>
     </Card.Header>
-    <Card.Content class="flex justify-center p-4 md:p-6">
-      <div class="notation-container">
-        <Notation measures={exercise.question} />
+    <Card.Content class="space-y-6">
+      <!-- Адаптивный грид для опций -->
+      <div class="grid gap-4 grid-cols-1 md:grid-cols-2">
+        {#each optionsWithCorrectFlag() as option, index (option.id)}
+          <QuizOption
+            {option}
+            {index}
+            isSelected={selectedOption === option.id}
+            {showResult}
+            showCorrectAnswer={showCorrectAnswer as boolean}
+            {hasInitialAnswer}
+            lastAnswerDate={lastAnswer?.answered_at}
+            onclick={selectOption}
+          />
+        {/each}
+      </div>
+
+      <!-- Объяснение -->
+      {#if showResult && !isCorrect && exercise.explanation}
+        <QuizExplanation explanation={exercise.explanation} />
+      {/if}
+
+      <Separator />
+
+      <!-- Контролы -->
+      <div class="flex flex-col sm:flex-row gap-10">
+        {#if !showResult}
+          <Button
+            onclick={checkAnswer}
+            disabled={!selectedOption || isSubmitting}
+            size="lg"
+          >
+            {isSubmitting ? 'Проверка...' : 'Проверить ответ'}
+          </Button>
+        {:else}
+          <div class="flex flex-col sm:flex-row gap-3 w-full">
+            {#if !isCorrect && !showCorrectAnswer}
+              <Button onclick={revealCorrectAnswer} size="lg">
+                <Eye class="w-4 h-4 mr-2" />
+                Показать ответ
+              </Button>
+            {/if}
+            <Button onclick={resetQuiz} variant="outline" size="lg">
+              Попробовать еще раз
+            </Button>
+          </div>
+        {/if}
       </div>
     </Card.Content>
   </Card.Root>
 
-  <!-- Основной грид -->
-  <div class="grid gap-6">
-    <!-- Секция с вариантами ответов -->
-    <Card.Root>
-      <Card.Header>
-        <Card.Title class="flex items-center gap-2">
-          <Clock class="w-5 h-5 text-primary" />
-          Выберите правильный ответ
-        </Card.Title>
-      </Card.Header>
-      <Card.Content class="space-y-6">
-        <!-- Адаптивный грид для опций -->
-        <div class="grid gap-4 grid-cols-1 md:grid-cols-2">
-          {#each optionsWithCorrectFlag() as option, index (option.id)}
-            <QuizOption
-              {option}
-              {index}
-              isSelected={selectedOption === option.id}
-              {showResult}
-              {showCorrectAnswer}
-              {hasInitialAnswer}
-              lastAnswerDate={lastAnswer?.answered_at}
-              onclick={selectOption}
-            />
-          {/each}
-        </div>
-
-        <!-- Объяснение -->
-        {#if showResult && !isCorrect && exercise.explanation}
-          <QuizExplanation explanation={exercise.explanation} />
-        {/if}
-
-        <Separator />
-
-        <!-- Контролы -->
-        <div class="flex flex-col sm:flex-row gap-10">
-          {#if !showResult}
-            <Button
-              onclick={checkAnswer}
-              disabled={!selectedOption || isSubmitting}
-              size="lg"
-            >
-              {isSubmitting ? 'Проверка...' : 'Проверить ответ'}
-            </Button>
-          {:else}
-            <div class="flex flex-col sm:flex-row gap-3 w-full">
-              {#if !isCorrect && !showCorrectAnswer}
-                <Button onclick={revealCorrectAnswer} size="lg">
-                  <Eye class="w-4 h-4 mr-2" />
-                  Показать ответ
-                </Button>
-              {/if}
-              <Button onclick={resetQuiz} variant="outline" size="lg">
-                Попробовать еще раз
-              </Button>
-            </div>
-          {/if}
-        </div>
-      </Card.Content>
-    </Card.Root>
-
-    <!-- История ответов -->
-    {#if answersHistory.length > 0}
-      <QuizHistory {answersHistory} options={optionsWithCorrectFlag()} />
-    {/if}
-  </div>
+  <!-- История ответов -->
+  {#if answersHistory.length > 0}
+    <QuizHistory {answersHistory} options={optionsWithCorrectFlag()} />
+  {/if}
 </div>
 
 <style>

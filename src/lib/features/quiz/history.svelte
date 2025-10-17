@@ -1,12 +1,11 @@
 <script lang="ts">
   import { Badge } from '$lib/components/ui/badge';
   import * as Card from '$lib/components/ui/card';
-  import { CircleCheck, CircleX, History } from 'lucide-svelte';
+  import CircleCheck from '@lucide/svelte/icons/circle-check';
+  import CircleX from '@lucide/svelte/icons/circle-x';
+  import History from '@lucide/svelte/icons/history';
   import { formatAnswerDate } from './utils';
-  import type {
-    ExerciseOption,
-    ExerciseAnswersHistory,
-  } from '$lib/features/exercises';
+  import type { ExerciseOption, ExerciseAnswersHistory } from '$lib/types';
 
   interface Props {
     answersHistory: ExerciseAnswersHistory[];
@@ -49,7 +48,7 @@
 
           <div class="flex items-center gap-2 mb-1">
             <Badge variant="outline" class="text-xs">
-              {getOptionLabel(answer.selected_answer_id, options)}
+              {getOptionLabel(answer.selected_answer_id as string, options)}
             </Badge>
           </div>
 

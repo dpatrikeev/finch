@@ -1,25 +1,15 @@
 <script lang="ts">
   import '../app.css';
-
   import type { Snippet } from 'svelte';
   import { ClerkProvider } from 'svelte-clerk';
   import { ruRU } from '@clerk/localizations';
   import { Toaster } from '$lib/components/ui/sonner';
-  import { Header } from '$lib/features/header';
-  import { HomeworkBadge } from '$lib/features/homework';
-
-  interface LayoutData {
-    clerk: any;
-    role: string;
-    newHomeworkCount: number;
-  }
 
   interface Props {
     children: Snippet;
-    data: LayoutData;
   }
 
-  let { children, data }: Props = $props();
+  let { children }: Props = $props();
 </script>
 
 <svelte:head>
@@ -34,14 +24,7 @@
 
 <ClerkProvider localization={ruRU}>
   <main class="min-h-screen relative overflow-hidden">
-    <Header {homeworkBadge} />
     {@render children()}
   </main>
   <Toaster />
 </ClerkProvider>
-
-{#snippet homeworkBadge()}
-  {#if data.role === 'student'}
-    <HomeworkBadge count={data.newHomeworkCount} />
-  {/if}
-{/snippet}

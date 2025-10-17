@@ -1,0 +1,19 @@
+---
+alwaysApply: true
+---
+
+Общие правила:
+
+1. Посмотреть userId, userRole можно через getRequestEvent();
+2. Роутинг регулируется на уровне hooks.server.ts
+3. N+1 проблема решается через query.batch
+4. Состояние классов можно решить с помощью class={["card", { state }]}
+
+Страницы:
+
+1. / Лендинг
+2. /(app)
+   2.1. Флоу учителя
+   /students/[studentId]/[homeworkId]/[exerciseId]
+   2.2. Флоу ученика
+   /homework/[homeworkId]/[exerciseId]

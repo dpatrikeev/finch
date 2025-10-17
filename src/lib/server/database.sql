@@ -22,11 +22,6 @@ CREATE TABLE public.homework (
   teacher_id text,
   student_id text,
   exercises ARRAY,
-  started_at timestamp with time zone,
-  completed_at timestamp with time zone,
-  exercises_completed ARRAY DEFAULT '{}'::text[],
-  total_attempts integer DEFAULT 0,
-  correct_attempts integer DEFAULT 0,
   CONSTRAINT homework_pkey PRIMARY KEY (id)
 );
 CREATE TABLE public.students (

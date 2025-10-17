@@ -1,6 +1,6 @@
 <script lang="ts">
   import * as Card from '$lib/components/ui/card';
-  import { Eye } from 'lucide-svelte';
+  import Eye from '@lucide/svelte/icons/eye';
 
   interface Props {
     explanation: string;

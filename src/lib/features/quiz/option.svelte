@@ -2,10 +2,12 @@
   import { Badge } from '$lib/components/ui/badge';
   import * as Card from '$lib/components/ui/card';
   import * as Tooltip from '$lib/components/ui/tooltip';
-  import { CircleCheck, CircleX, History } from 'lucide-svelte';
-  import type { ExerciseOption } from '$lib/features/exercises';
+  import CircleCheck from '@lucide/svelte/icons/circle-check';
+  import CircleX from '@lucide/svelte/icons/circle-x';
+  import History from '@lucide/svelte/icons/history';
   import { Notation } from '$lib/features/notation';
   import { formatAnswerDate } from './utils';
+  import type { ExerciseOption } from '$lib/types';
 
   interface Props {
     option: ExerciseOption;
